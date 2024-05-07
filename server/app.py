@@ -9,7 +9,7 @@ from sqlalchemy import desc
 from config import app, db, api
 
 # Add your model imports
-# from models import models
+from models import User
 
 class Index(Resource):
     def get(self):
