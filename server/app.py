@@ -11,5 +11,11 @@ from config import app, db, api
 # Add your model imports
 # from models import models
 
+class Index(Resource):
+    def get(self):
+        return {'message': 'Welcome to my REST API'}
+    
+api.add_resource(Index, '/')
+
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
