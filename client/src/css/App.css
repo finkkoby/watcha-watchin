@@ -7,37 +7,5 @@ div.site-header h1 {
   text-align: center;
   font-size: xxx-large;
   letter-spacing: 10px;
-}
-
-div.page-header h3 {
-  display: block;
-  text-align: center;
-  font-size: xx-large;
-  letter-spacing: 5px;
-}
-
-div.page-body {
-  display: block;
-  text-align: center;
-  font-size: x-large;
-  letter-spacing: 2px;
-  margin: 60px auto;
-}
-
-div.links a {
-  margin: 0px 30px;
-  text-decoration: none;
-  color: white;
-  background-color: var(--two);
-  padding: 4px 40px;
-  border-radius: 3px;
-  border: hidden solid 7px;
-}
-
-div.links a.active {
-  border: solid white 7px;
-}
-
-div.about-body {
-  margin: 100px auto;
+  text-shadow: var(--two) -3px 3px 0px;
 }

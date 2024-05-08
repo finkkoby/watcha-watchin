@@ -1,8 +1,10 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Link, Outlet, useLocation } from 'react-router-dom'
 
 import '../css/Home.css'
 
 function Home() {
+    const { pathname } = useLocation()
+
     return (
         <>
             <div className='page-header'>
@@ -16,6 +18,11 @@ function Home() {
                 </div>
                 <Outlet />
             </div>
+            { pathname !== '/' ? (
+                <div className='page-footer'>
+                    <Link to='/'>learn more</Link>
+                </div>
+            ) : null}
         </>
     )
 }
