@@ -1,0 +1,28 @@
+div.form-container form {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    min-width: 400px;
+    margin: 70px auto;
+    padding: 45px;
+    background-color: var(--one);
+}
+
+div.form-container form input {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0px;
+    border: none;
+    border-radius: 3px;
+}
+
+div.form-container form label {
+    text-align: start;
+}
+
+form button {
+    display: block;
+    margin: auto;
+    width: fit-content;
+}

@@ -1,5 +1,7 @@
 import { Link, Outlet } from 'react-router-dom'
 
+import '../css/Home.css'
+
 function Home() {
     return (
         <>
@@ -7,12 +9,12 @@ function Home() {
                 <h3>welcome!</h3>
             </div>
             <div className='page-body'>
-                <Outlet />
                 <div className='links'>
                     <Link to='/login'>login</Link>
                     <Link to='/signup'>signup</Link>
                     <Link to='/join'>join</Link>
                 </div>
+                <Outlet />
             </div>
         </>
     )

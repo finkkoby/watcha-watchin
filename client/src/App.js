@@ -11,8 +11,10 @@ import Join from './pages/Join'
 
 function App() {
   return (
-    <div className='site-header'>
-      <h1>whatcha' watchin'</h1>
+    <>
+      <div className='site-header'>
+        <h1>whatcha' watchin'</h1>
+      </div>
       <Routes>
         <Route path='/' element={<Home />} >
           <Route path='/' element={<About />} />
@@ -21,7 +23,7 @@ function App() {
           <Route path='join' element={<Join />} />
         </Route>
       </Routes>
-    </div>
+    </>
   );
 }
 
