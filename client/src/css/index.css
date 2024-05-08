@@ -20,3 +20,13 @@ code {
   --five: #113065;
   background-color: var(--four);
 }
+
+button {
+  border: none;
+  background-color: var(--two);
+  color: white;
+  margin: 5px;
+  padding: 5px 15px;
+  border-radius: 3px;
+  letter-spacing: 3px;
+}

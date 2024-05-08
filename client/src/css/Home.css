@@ -10,11 +10,12 @@ div.form-container form {
 
 div.form-container form input {
     display: block;
-    width: 100%;
+    width: 96%;
     padding: 10px;
     margin: 10px 0px;
     border: none;
     border-radius: 3px;
+    letter-spacing: 2px;
 }
 
 div.form-container form label {
@@ -24,5 +25,24 @@ div.form-container form label {
 form button {
     display: block;
     margin: auto;
+    margin-top: 20px;
     width: fit-content;
+    transition: all 0.25s;
 }
+
+form button:hover {
+    background-color: var(--five);
+    color: white;
+    cursor: pointer;
+}
+
+form button:active {
+    box-shadow: inset white 0px 0px 7px;
+}
+
+form p {
+    display: block;
+    text-align: right;
+    font-size: medium;
+    margin: 5px 0px;
+}   

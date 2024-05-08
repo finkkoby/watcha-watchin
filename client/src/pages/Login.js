@@ -19,7 +19,6 @@ function Login() {
                     password: ''
                 }}
                 validationSchema={formSchema}
-                validateOnChange={false}
                 onSubmit={values => console.log(values)}
             >
                 {props => (

@@ -1,4 +1,4 @@
-import { Link, Outlet } from 'react-router-dom'
+import { NavLink, Outlet } from 'react-router-dom'
 
 import '../css/Home.css'
 
@@ -10,9 +10,9 @@ function Home() {
             </div>
             <div className='page-body'>
                 <div className='links'>
-                    <Link to='/login'>login</Link>
-                    <Link to='/signup'>signup</Link>
-                    <Link to='/join'>join</Link>
+                    <NavLink to='/login'>login</NavLink>
+                    <NavLink to='/signup'>signup</NavLink>
+                    <NavLink to='/join'>join</NavLink>
                 </div>
                 <Outlet />
             </div>

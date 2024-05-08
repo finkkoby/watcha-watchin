@@ -31,6 +31,11 @@ div.links a {
   background-color: var(--two);
   padding: 4px 40px;
   border-radius: 3px;
+  border: hidden solid 7px;
+}
+
+div.links a.active {
+  border: solid white 7px;
 }
 
 div.about-body {
