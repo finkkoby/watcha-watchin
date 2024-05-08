@@ -8,6 +8,7 @@ import About from './pages/About'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Join from './pages/Join'
+import UserHome from './pages/UserHome'
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path='signup' element={<Signup />} />
           <Route path='join' element={<Join />} />
         </Route>
+        <Route path='/user' element={<UserHome />} />
       </Routes>
     </>
   );
