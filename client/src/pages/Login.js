@@ -1,7 +1,17 @@
+import { useContext, useState, useEffect } from 'react'
+
 import * as yup from 'yup'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 
+import AppContext from '../context/AppContext'
+
 function Login() {
+    const [error, setError] = useState(false)
+    const { user, setUser } = useContext(AppContext)
+
+    useEffect(() => {
+        return () => setError(false)
+    }, [])
 
     const formSchema = yup.object().shape({
         username: yup.string()
@@ -9,6 +19,9 @@ function Login() {
         password: yup.string()
            .required('please enter a password')
     })
+
+    console.log(error)
+    console.log(user)
    
     return (
         <div className="form-container">
@@ -29,13 +42,15 @@ function Login() {
                             password:  values.password
                         })
                     }).then(r => {
-                        if (r.ok) {
-                            r.json().then(data => {
-                                console.log(data)
-                            })
-                        } else {
-                            console.log(r)
-                        }
+                        r.json().then(res => {
+                            if (res.ok) {
+                                console.log(res)
+                                setUser(res)
+                            } else {
+                                console.log(res)
+                                setError(res.message)
+                            }
+                        })
                     })
                 }}
             >
@@ -49,9 +64,11 @@ function Login() {
                         
                         <label htmlFor='password'>
                             password
-                            <Field name="password" placeholder="********" />
+                            <Field type="password" name="password" placeholder="********" />
                         </label>
                         <ErrorMessage name="password" component="p" />
+
+                        {error ? <p>invalid username or password</p> : null}
 
                         <button type='submit'>- login -</button>
                     </Form>
