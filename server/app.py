@@ -15,6 +15,13 @@ class Index(Resource):
     def get(self):
         return {'message': 'Welcome to my REST API'}
     
+class CheckSession(Resource):
+    def get(self):
+        if session.get('user_id'):
+            return User.query.get(session['user_id']).to_dict(), 200
+        else:
+            return {'error': 'user not logged in'}, 401
+    
 class Login(Resource):
     def post(self):
         json = request.get_json()
@@ -27,9 +34,12 @@ class Login(Resource):
                 return {'message': 'Invalid username or password'}
         except:
             return {'message': 'Login failed'}
+        
+
     
 api.add_resource(Index, '/')
 api.add_resource(Login, '/api/login')
+api.add_resource(CheckSession, '/api/check_session')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
