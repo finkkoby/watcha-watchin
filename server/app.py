@@ -19,15 +19,14 @@ class Login(Resource):
     def post(self):
         json = request.get_json()
         try:
-            user = User.query.filter_by(username=json['username']).first()
-            if user:
-                if user.autheticate(json['password']):
-                    session['user_id'] = user.id
-                    return user.to_dict(), 200
-                else:
-                    return {'message': 'Invalid credentials'}, 401
+            user = User.query.filter(User.username == json['username']).first()
+            if user and user.authenticate(json['password']):
+                session['user_id'] = user.id
+                return user.to_dict(), 200
+            else:
+                return {'message': 'Invalid username or password'}
         except:
-            return {'message': 'User not found'}, 404
+            return {'message': 'Login failed'}
     
 api.add_resource(Index, '/')
 api.add_resource(Login, '/api/login')

@@ -1,6 +1,8 @@
 # server/config.py
 #!/usr/bin/env python3
 
+import secrets
+
 from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -12,7 +14,7 @@ from flask_bcrypt import Bcrypt
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# app.secret_key = b''
+app.secret_key = secrets.token_urlsafe(15)
 app.json.compact = False
 
 metadata = MetaData(naming_convention={
