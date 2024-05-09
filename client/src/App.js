@@ -9,11 +9,13 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Join from './pages/Join'
 import UserHome from './pages/UserHome'
+import UserDashboard from './pages/UserDashboard'
 
 import AppContext from './context/AppContext'
 
 function App() {
   const [user, setUser] = useState(null)
+  const navigate = useNavigate()
   
   useEffect(() => {
     fetch('/api/check_session')
@@ -23,8 +25,6 @@ function App() {
        }
     })
   }, [])
-
-  const navigate = useNavigate()
 
   function handleLogout() {
     fetch('/api/logout').then(r => {
@@ -55,7 +55,9 @@ function App() {
             <Route path='signup' element={<Signup />} />
             <Route path='join' element={<Join />} />
           </Route>
-          <Route path='user' element={<UserHome />} />
+          <Route path='/user' element={<UserHome />} >
+            <Route path='/user' element={<UserDashboard />} />
+          </Route>
         </Routes>
       </AppContext.Provider>
     </>

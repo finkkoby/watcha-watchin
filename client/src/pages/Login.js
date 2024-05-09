@@ -62,7 +62,7 @@ function Login() {
                         
                         <label htmlFor='password'>
                             password
-                            <Field type="password" name="password" placeholder="********" />
+                            <Field name="password" placeholder="********" />
                         </label>
                         <ErrorMessage name="password" component="p" />
 
