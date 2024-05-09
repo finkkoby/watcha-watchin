@@ -1,0 +1,33 @@
+div.dash-container {
+    margin: auto;
+    width: 70%;
+    min-width: 600px;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
+div.dash-column {
+    width: 100%;
+}
+
+div.dash-box {
+    background-color: var(--two);
+    margin: 30px 15px;
+    padding: 15px;
+}
+
+div.dash-box h3 {
+    margin: 0;
+}
+
+div.dash-box#button-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+div.dash-box#button-bar button{
+    background-color: var(--four);
+    padding: 10px 35px;
+}

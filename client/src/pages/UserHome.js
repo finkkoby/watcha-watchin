@@ -3,8 +3,10 @@ import { Outlet } from'react-router-dom'
 
 import AppContext from '../context/AppContext'
 
+import '../css/UserHome.css'
+
 function UserHome() {
-    const { navigate } = useContext(AppContext)
+    const { navigate, user } = useContext(AppContext)
 
     useEffect(() => {
         fetch('/api/check_session')
@@ -17,7 +19,7 @@ function UserHome() {
 
     return (
         <div className='user-home'>
-            <h3>welcome to your home page!</h3>
+            <h3>welcome, <em>{user.first_name}</em>!</h3>
             <Outlet />
         </div>
     )
