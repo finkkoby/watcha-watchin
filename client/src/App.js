@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 
 import './css/App.css'
 
@@ -15,6 +15,8 @@ import AppContext from './context/AppContext'
 function App() {
   const [user, setUser] = useState(null)
 
+  const navigate = useNavigate()
+
   return (
     <>
       <div className='site-header'>
@@ -23,7 +25,8 @@ function App() {
       <AppContext.Provider value={
         {
           user: user,
-          setUser: setUser
+          setUser: setUser,
+          navigate: navigate,
         }
       }>
         <Routes>
@@ -33,7 +36,7 @@ function App() {
             <Route path='signup' element={<Signup />} />
             <Route path='join' element={<Join />} />
           </Route>
-          <Route path='/user' element={<UserHome />} />
+          <Route path='user' element={<UserHome />} />
         </Routes>
       </AppContext.Provider>
     </>

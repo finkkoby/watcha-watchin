@@ -7,7 +7,7 @@ import AppContext from '../context/AppContext'
 
 function Login() {
     const [error, setError] = useState(false)
-    const { user, setUser } = useContext(AppContext)
+    const { setUser, navigate } = useContext(AppContext)
 
     useEffect(() => {
         return () => setError(false)
@@ -20,9 +20,6 @@ function Login() {
            .required('please enter a password')
     })
 
-    console.log(error)
-    console.log(user)
-   
     return (
         <div className="form-container">
             <Formik
@@ -42,15 +39,16 @@ function Login() {
                             password:  values.password
                         })
                     }).then(r => {
-                        r.json().then(res => {
-                            if (res.ok) {
-                                console.log(res)
-                                setUser(res)
-                            } else {
-                                console.log(res)
-                                setError(res.message)
-                            }
-                        })
+                        if (r.ok) {
+                            r.json().then(user => {
+                                setUser(user)
+                                navigate('/user')
+                            })
+                        } else {
+                            r.json().then(res => {
+                                setError(res)
+                            })
+                        }
                     })
                 }}
             >
