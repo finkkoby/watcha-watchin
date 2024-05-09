@@ -1,7 +1,13 @@
+import { useContext, useState, useEffect } from 'react'
+
 import * as yup from 'yup'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 
+import AppContext from '../context/AppContext'
+
 function Signup() {
+    const [error, setError] = useState(false)
+    const { setUser, navigate } = useContext(AppContext)
     
     const formSchema = yup.object().shape({
         firstName: yup.string().required("please enter your first name"),
@@ -26,7 +32,34 @@ function Signup() {
                     age: '',
                 }}
                 validationSchema={formSchema}
-                onSubmit={values => console.log(values)}
+                onSubmit={values => {
+                    fetch('/api/signup', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            firstName: values.firstName,
+                            lastName: values.lastName,
+                            username: values.username,
+                            email: values.email,
+                            password:  values.password,
+                            confirmPassword: values.confirmPassword,
+                            age: values.age,
+                        })
+                    }).then(r => {
+                        if (r.ok) {
+                            r.json().then(user => {
+                                setUser(user)
+                                navigate('/user')
+                            })
+                        } else {
+                            r.json().then(res => {
+                                setError(res.message)
+                            })
+                        }
+                    })
+                }}
             >
                 {props => (
                     <Form>
@@ -71,6 +104,8 @@ function Signup() {
                             <Field name="age" placeholder="optional" />
                         </label>
                         <ErrorMessage name="age" component="p" />
+
+                        {error ? <p>{error}</p> : null}
 
                         <button type='submit'>- signup -</button>
                     </Form>
