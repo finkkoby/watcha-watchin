@@ -12,6 +12,7 @@ flask-bcrypt = "*"
 sqlalchemy-serializer = "*"
 gunicorn = "*"
 honcho = "*"
+faker = "*"
 
 [dev-packages]
 
