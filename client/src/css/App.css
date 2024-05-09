@@ -9,3 +9,9 @@ div.site-header h1 {
   letter-spacing: 10px;
   text-shadow: var(--two) -3px 3px 0px;
 }
+
+div.site-header button {
+  position: absolute;
+  top: 6%;
+  right: 6%;
+}
