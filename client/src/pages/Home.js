@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { NavLink, Link, Outlet, useLocation } from 'react-router-dom'
 
 import '../css/Home.css'

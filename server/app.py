@@ -15,6 +15,13 @@ class Index(Resource):
     def get(self):
         return {'message': 'Welcome to my REST API'}
     
+@app.before_request
+def check_login():
+    if request.path.startswith('/api'):
+        if not session.get('user_id') \
+            and request.endpoint not in ['login', 'signup']:
+            return {'error': 'user not logged in'}, 401
+    
 class CheckSession(Resource):
     def get(self):
         if session.get('user_id'):
@@ -34,12 +41,19 @@ class Login(Resource):
                 return {'message': 'Invalid username or password'}
         except:
             return {'message': 'Login failed'}
+
+class Logout(Resource):
+    def get(self):
+        session.pop('user_id', None)
+        return {'message': 'Logged out'}
         
 
     
-api.add_resource(Index, '/')
-api.add_resource(Login, '/api/login')
-api.add_resource(CheckSession, '/api/check_session')
+api.add_resource(Index, '/', endpoint='index')
+api.add_resource(CheckSession, '/api/check_session', endpoint='check_session')
+api.add_resource(Login, '/api/login', endpoint='login')
+api.add_resource(Logout, '/api/logout', endpoint='logout')
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

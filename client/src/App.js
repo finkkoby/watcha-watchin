@@ -20,19 +20,26 @@ function App() {
     .then(r => {
        if (r.ok) {
          r.json().then(user => setUser(user))
-       } else {
-         setUser(null)
-         navigate('/')
        }
     })
   }, [])
 
   const navigate = useNavigate()
 
+  function handleLogout() {
+    fetch('/api/logout').then(r => {
+      if (r.ok) {
+        setUser(null)
+        navigate('/login')
+      }
+    })
+  }
+
   return (
     <>
       <div className='site-header'>
         <h1>whatcha' watchin'</h1>
+        {user ? <button id='logout' onClick={handleLogout}>logout</button> : null}
       </div>
       <AppContext.Provider value={
         {
