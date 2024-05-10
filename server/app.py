@@ -75,9 +75,9 @@ class Signup(Resource):
         except:
             return {'message': 'signup failed -- try again'}, 400
 
-class Test(Resource):
-    def get(self):
-        return {'message': 'test'}, 200
+class NewRoom(Resource):
+    def post(self):
+        pass
         
 
     
@@ -86,7 +86,7 @@ api.add_resource(CheckSession, '/api/check_session', endpoint='check_session')
 api.add_resource(Login, '/api/login', endpoint='login')
 api.add_resource(Logout, '/api/logout', endpoint='logout')
 api.add_resource(Signup, '/api/signup', endpoint='signup')
-api.add_resource(Test, '/api/test', endpoint='test')
+api.add_resource(NewRoom, '/api/rooms/new', endpoint='rooms_new')
 
 
 if __name__ == '__main__':
