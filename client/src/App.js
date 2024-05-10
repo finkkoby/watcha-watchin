@@ -11,6 +11,7 @@ import Join from './pages/Join'
 import UserHome from './pages/UserHome'
 import UserDashboard from './pages/UserDashboard'
 import NewRoom from './pages/NewRoom'
+import ViewingRoom from './pages/ViewingRoom'
 
 import AppContext from './context/AppContext'
 
@@ -63,7 +64,8 @@ function App() {
           </Route>
           <Route path='/user' element={<UserHome />} >
             <Route path='/user' element={<UserDashboard />} />
-            <Route path='/user/rooms/new' element={<NewRoom />} />
+            <Route path='/user/room/new' element={<NewRoom />} />
+            <Route path='/user/room/:id' element={<ViewingRoom />} />
           </Route>
         </Routes>
       </AppContext.Provider>

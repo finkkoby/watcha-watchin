@@ -96,6 +96,14 @@ class NewRoom(Resource):
         else:
             return {'message': 'room name already exists'}, 400
         
+class RoomsId(Resource):
+    def get(self, id):
+        room = Room.query.filter(Room.id == id).first()
+        if room:
+            return room.to_dict(), 200
+        else:
+            return {'message': 'room does not exist'}, 400
+        
 
     
 api.add_resource(Index, '/', endpoint='index')
@@ -104,6 +112,7 @@ api.add_resource(Login, '/api/login', endpoint='login')
 api.add_resource(Logout, '/api/logout', endpoint='logout')
 api.add_resource(Signup, '/api/signup', endpoint='signup')
 api.add_resource(NewRoom, '/api/rooms/new', endpoint='rooms_new')
+api.add_resource(RoomsId, '/api/rooms/<int:id>', endpoint='rooms_id')
 
 
 if __name__ == '__main__':

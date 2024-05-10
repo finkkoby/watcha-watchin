@@ -44,7 +44,7 @@ function NewRoom() {
                                 setRoom(res)
                                 const newUser = {...user, "room_id": res.id}
                                 setUser(newUser)
-                                setError(false)
+                                navigate(`/user/room/${res.id}`)
                             })
                         } else {
                             r.json().then(res => {

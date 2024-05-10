@@ -9,7 +9,7 @@ function UserDashboard() {
         <div className='dash-container'>
             <div id='column1' className='dash-column'>
                 <div className='dash-box' id='button-bar'>
-                    <button id='create-room' onClick={() => navigate('/user/rooms/new')}>create room</button>
+                    <button id='create-room' onClick={() => navigate('/user/room/new')}>create room</button>
                     <button id='join-room'>join room</button>
                 </div>
                 <div className='dash-box' id='recent-videos'>
