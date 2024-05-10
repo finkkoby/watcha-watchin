@@ -2,6 +2,17 @@ html {
   color: white;
 }
 
+div.site-header {
+  display: grid;
+  grid-template-columns: [line1] 20% [line2] 60% [line4] 20% [end];
+  align-items: center;
+}
+
+div.site-box {
+  display: flex;
+  justify-content: center;
+}
+
 div.site-header h1 {
   display: block;
   text-align: center;
@@ -10,8 +21,8 @@ div.site-header h1 {
   text-shadow: var(--two) -3px 3px 0px;
 }
 
-div.site-header button {
-  position: absolute;
-  top: 6%;
-  right: 6%;
+div.site-box p {
+  position: relative;
+  top: 4px;
+  letter-spacing: 2px;
 }

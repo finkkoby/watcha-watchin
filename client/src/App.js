@@ -38,8 +38,13 @@ function App() {
   return (
     <>
       <div className='site-header'>
+        <div className='site-box'>
+          { user ? <p><em>welcome, {user.first_name}</em></p> : null}
+        </div>
         <h1>whatcha' watchin'</h1>
-        {user ? <button id='logout' onClick={handleLogout}>logout</button> : null}
+        <div className='site-box'>
+          {user ? <button id='logout' onClick={handleLogout}>logout</button> : null}
+        </div>
       </div>
       <AppContext.Provider value={
         {

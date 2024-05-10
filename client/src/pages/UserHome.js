@@ -19,7 +19,6 @@ function UserHome() {
 
     return (
         <div className='user-home'>
-            <h3>welcome, <em>{user.first_name}</em>!</h3>
             <Outlet />
         </div>
     )
