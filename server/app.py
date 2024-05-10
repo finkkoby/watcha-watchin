@@ -3,13 +3,14 @@
 # Remote library imports
 from flask import request, session, make_response
 from flask_restful import Resource
-from sqlalchemy import desc
+import string
+import random
 
 # Local imports
 from config import app, db, api
 
 # Add your model imports
-from models import User
+from models import User, Room
 
 class Index(Resource):
     def get(self):
@@ -77,7 +78,23 @@ class Signup(Resource):
 
 class NewRoom(Resource):
     def post(self):
-        pass
+        json = request.get_json()
+        code = ''.join(random.choices(string.ascii_uppercase +
+                        string.digits, k=5))
+        name = Room.query.filter(Room.name == json['name']).first()
+        if not name:
+            room = Room(
+                name=json['name'],
+                code=code
+            )
+            if room:
+                user = User.query.filter(User.id == session.get('user_id')).first()
+                user.room = room
+            db.session.add(room)
+            db.session.commit()
+            return room.to_dict(), 200
+        else:
+            return {'message': 'room name already exists'}, 400
         
 
     

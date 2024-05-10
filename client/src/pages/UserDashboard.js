@@ -3,7 +3,7 @@ import { useContext } from "react";
 import AppContext from "../context/AppContext";
 
 function UserDashboard() {
-    const { navigate } = useContext(AppContext);
+    const { user, navigate } = useContext(AppContext);
 
     return (
         <div className='dash-container'>

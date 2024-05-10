@@ -1,5 +1,5 @@
 import { useEffect, useContext } from 'react'
-import { Outlet } from'react-router-dom'
+import { Outlet, Link, useLocation } from'react-router-dom'
 
 import AppContext from '../context/AppContext'
 
@@ -7,6 +7,8 @@ import '../css/UserHome.css'
 
 function UserHome() {
     const { navigate, user } = useContext(AppContext)
+
+    const { pathname } = useLocation()
 
     useEffect(() => {
         fetch('/api/check_session')
@@ -18,8 +20,13 @@ function UserHome() {
     }, [])
 
     return (
-        <div className='user-home'>
+        <div className='page-body'>
             <Outlet />
+            { pathname !== '/user' ? (
+                <div className='page-footer'>
+                    <Link to='/user'>back to dashboard</Link>
+                </div>
+            ) : null}
         </div>
     )
 }
