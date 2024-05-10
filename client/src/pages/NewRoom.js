@@ -7,9 +7,8 @@ import AppContext from '../context/AppContext'
 
 function NewRoom() {
     const [error, setError] = useState(false)
-    const [room, setRoom] = useState(null)
 
-    const { user, setUser, navigate } = useContext(AppContext)
+    const { user, setUser, navigate, handleUpdate } = useContext(AppContext)
 
     useEffect(() => {
         return () => setError(false)
@@ -19,11 +18,8 @@ function NewRoom() {
         name: yup.string().required("please enter a room name")
     })
 
-    console.log(room)
-    console.log(user)
-
     return (
-        <div className='form-container'>
+        <div className='form-container page-body'>
             <Formik
                 initialValues={{
                     name: ''
@@ -41,9 +37,8 @@ function NewRoom() {
                     }).then(r => {
                         if (r.ok) {
                             r.json().then(res => {
-                                setRoom(res)
-                                const newUser = {...user, "room_id": res.id}
-                                setUser(newUser)
+                                const newUser = {...user, "room": res}
+                                handleUpdate(newUser)
                                 navigate(`/user/room/${res.id}`)
                             })
                         } else {

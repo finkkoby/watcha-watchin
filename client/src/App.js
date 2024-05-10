@@ -18,15 +18,47 @@ import AppContext from './context/AppContext'
 function App() {
   const [user, setUser] = useState(null)
   const navigate = useNavigate()
-  
+
+  useEffect(() => {
+    console.log(user)
+  }, [user])
+
   useEffect(() => {
     fetch('/api/check_session')
     .then(r => {
        if (r.ok) {
          r.json().then(user => setUser(user))
+       } else {
+         r.json().then(res => {
+           console.log(res)
+           setUser(null)
+         })
        }
     })
   }, [])
+
+  function handleUpdate(user) {
+    fetch(`/api/users/${user.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        room: user.room,
+      })
+    }).then(r => {
+        if (r.ok) {
+          r.json().then(res => {
+            console.log(res)
+            setUser(res)
+          })
+        } else {
+          r.json().then(res => {
+            console.log(res.message)
+          })
+        }
+      })
+  }
 
   function handleLogout() {
     fetch('/api/logout').then(r => {
@@ -53,6 +85,7 @@ function App() {
           user: user,
           setUser: setUser,
           navigate: navigate,
+          handleUpdate: handleUpdate,
         }
       }>
         <Routes>

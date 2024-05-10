@@ -20,7 +20,7 @@ function UserHome() {
     }, [])
 
     return (
-        <div className='page-body'>
+        <div>
             <Outlet />
             { pathname !== '/user' ? (
                 <div className='page-footer'>
