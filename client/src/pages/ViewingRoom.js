@@ -8,33 +8,31 @@ function ViewingRoom() {
     const [room, setRoom] = useState(null)
     const [error, setError] = useState(false)
 
-    const { user, setUser, handleUpdate } = useContext(AppContext)
+    const { user, setUser, handleUpdate, navigate } = useContext(AppContext)
 
     useEffect(() => {
-        return (() => {
-            setError(false)
-            handleUpdate({...user, "room": null})
-        })
-    }, [])
-
-    useEffect(() => {
-        fetch(`/api/rooms/${id}`)
-        .then(r => {
-            if (r.ok) {
-            r.json().then(res => {
-                setRoom(res)
-            })
-            } else {
-            r.json().then(res => {
-                setError(res)
-                console.log(res)
-            })
+        try {
+            if (user.room && user) {
+                fetch(`/api/rooms/${id}/${user.room.code}`)
+                .then(r => {
+                    if (r.ok) {
+                    r.json().then(res => {
+                        setRoom(res)
+                    })
+                    } else {
+                    r.json().then(res => {
+                        navigate('/user/room/join')
+                    })
+                    }
+                })
+                return (() => {
+                    setError(false)
+                    handleUpdate({...user, "room": null})
+                })
             }
-        })
-        return (() => {
-            // const newUser = {...user, "room": null}
-            // handleUpdate(newUser)
-       })
+        } catch {
+            navigate('/user/room/join')
+        }
     }, [])
     
     return (

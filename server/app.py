@@ -94,7 +94,6 @@ class UserId(Resource):
         else:
             return {'message': 'user not found'}, 400
 
-
 class NewRoom(Resource):
     def post(self):
         json = request.get_json()
@@ -115,11 +114,31 @@ class NewRoom(Resource):
         else:
             return {'message': 'room name already exists'}, 400
         
+class JoinRoom(Resource):
+    def post(self):
+        json = request.get_json()
+        try:
+            user = User.query.filter(User.id == session.get('user_id')).first()
+            if user:
+                try:
+                    room = Room.query.filter(Room.code == json['roomCode']).first()
+                    if room:
+                        user.room = room
+                        db.session.commit()
+                        return room.to_dict(), 200
+                except:
+                    return {'message': 'could not locate room -- try again'}, 400
+        except:
+            return {'message': 'user not found'}, 400
+        
 class RoomsId(Resource):
-    def get(self, id):
+    def get(self, id, code):
         room = Room.query.filter(Room.id == id).first()
         if room:
-            return room.to_dict(), 200
+            if room.code == code:
+                return room.to_dict(), 200
+            else:
+                return {'message': 'room code does not match'}, 400
         else:
             return {'message': 'room does not exist'}, 400
         
@@ -131,7 +150,8 @@ api.add_resource(Login, '/api/login', endpoint='login')
 api.add_resource(Logout, '/api/logout', endpoint='logout')
 api.add_resource(Signup, '/api/signup', endpoint='signup')
 api.add_resource(NewRoom, '/api/rooms/new', endpoint='rooms_new')
-api.add_resource(RoomsId, '/api/rooms/<int:id>', endpoint='rooms_id')
+api.add_resource(JoinRoom, '/api/rooms/join', endpoint='rooms_join')
+api.add_resource(RoomsId, '/api/rooms/<int:id>/<string:code>', endpoint='rooms_id')
 api.add_resource(UserId, '/api/users/<int:id>', endpoint='users_id')
 
 

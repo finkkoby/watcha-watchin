@@ -12,12 +12,15 @@ import UserHome from './pages/UserHome'
 import UserDashboard from './pages/UserDashboard'
 import NewRoom from './pages/NewRoom'
 import ViewingRoom from './pages/ViewingRoom'
+import JoinRoom from './pages/JoinRoom'
 
 import AppContext from './context/AppContext'
 
 function App() {
   const [user, setUser] = useState(null)
   const navigate = useNavigate()
+
+  console.log(user)
 
   useEffect(() => {
     fetch('/api/check_session')
@@ -94,6 +97,7 @@ function App() {
             <Route path='/user' element={<UserDashboard />} />
             <Route path='/user/room/new' element={<NewRoom />} />
             <Route path='/user/room/:id' element={<ViewingRoom />} />
+            <Route path='/user/room/join' element={<JoinRoom />} />
           </Route>
         </Routes>
       </AppContext.Provider>
