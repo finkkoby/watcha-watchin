@@ -30,4 +30,6 @@ button, a {
   padding: 5px 15px;
   border-radius: 3px;
   letter-spacing: 3px;
+  transition: all 0.25s;
+  cursor: pointer;
 }

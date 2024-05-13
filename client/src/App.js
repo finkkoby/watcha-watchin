@@ -20,10 +20,6 @@ function App() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    console.log(user)
-  }, [user])
-
-  useEffect(() => {
     fetch('/api/check_session')
     .then(r => {
        if (r.ok) {
@@ -49,7 +45,6 @@ function App() {
     }).then(r => {
         if (r.ok) {
           r.json().then(res => {
-            console.log(res)
             setUser(res)
           })
         } else {
