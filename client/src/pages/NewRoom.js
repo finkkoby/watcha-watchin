@@ -8,7 +8,7 @@ import AppContext from '../context/AppContext'
 function NewRoom() {
     const [error, setError] = useState(false)
 
-    const { user, setUser, navigate, handleUpdate } = useContext(AppContext)
+    const { user, room, setRoom, navigate, handleUpdate } = useContext(AppContext)
 
     useEffect(() => {
         return () => setError(false)
@@ -38,6 +38,7 @@ function NewRoom() {
                         if (r.ok) {
                             r.json().then(res => {
                                 const newUser = {...user, "room": res}
+                                setRoom(res)
                                 handleUpdate(newUser)
                                 navigate(`/user/room/${res.id}`)
                             })

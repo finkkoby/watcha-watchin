@@ -8,14 +8,15 @@ import AppContext from '../context/AppContext'
 function JoinRoom() {
     const [error, setError] = useState(false)
 
-    const { user, setUser, navigate, handleUpdate } = useContext(AppContext)
+    const { user, room, setRoom, navigate, handleUpdate } = useContext(AppContext)
 
     useEffect(() => {
         return () => setError(false)
     }, [])
 
     const formSchema = yup.object().shape({
-        // name: yup.string().required("please enter a room code")
+        name: yup.string().required("please enter a name"),
+        roomCode: yup.string().required("please enter a room code")
     })
 
     return (
@@ -40,6 +41,7 @@ function JoinRoom() {
                         if (r.ok) {
                             r.json().then(res => {
                                 const newUser = {...user, "room": res}
+                                setRoom(res)
                                 handleUpdate(newUser)
                                 navigate(`/user/room/${res.id}`)
                             })

@@ -18,6 +18,7 @@ import AppContext from './context/AppContext'
 
 function App() {
   const [user, setUser] = useState(null)
+  const [room, setRoom] = useState(null)
   const navigate = useNavigate()
 
   console.log(user)
@@ -84,6 +85,8 @@ function App() {
           setUser: setUser,
           navigate: navigate,
           handleUpdate: handleUpdate,
+          room: room,
+          setRoom: setRoom
         }
       }>
         <Routes>
