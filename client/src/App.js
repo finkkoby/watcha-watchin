@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
+import { io } from "socket.io-client";
 
 import './css/App.css'
 
@@ -13,15 +14,41 @@ import UserDashboard from './pages/UserDashboard'
 import NewRoom from './pages/NewRoom'
 import ViewingRoom from './pages/ViewingRoom'
 import JoinRoom from './pages/JoinRoom'
-
 import AppContext from './context/AppContext'
 
 function App() {
   const [user, setUser] = useState(null)
   const [room, setRoom] = useState(null)
   const navigate = useNavigate()
+  const [socketInstance, setSocketInstance] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  console.log(user)
+  useEffect(() => {
+    if (user) {
+      const socket = io("localhost:5555/", {
+        transports: ["websocket"],
+        cors: {
+          origin: "http://localhost:4000/",
+        },
+      });
+
+      setSocketInstance(socket);
+
+      socket.on("connect", (data) => {
+        console.log(data);
+      });
+
+      setLoading(false);
+
+      socket.on("disconnect", (data) => {
+        console.log(data);
+      });
+
+      return function cleanup() {
+        socket.disconnect();
+      };
+    }
+  }, [user]);
 
   useEffect(() => {
     fetch('/api/check_session')
@@ -86,7 +113,8 @@ function App() {
           navigate: navigate,
           handleUpdate: handleUpdate,
           room: room,
-          setRoom: setRoom
+          setRoom: setRoom,
+          socket: socketInstance
         }
       }>
         <Routes>

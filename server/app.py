@@ -1,16 +1,42 @@
 #!/usr/bin/env python3
 
 # Remote library imports
-from flask import request, session, make_response
+from flask import request, session, jsonify
 from flask_restful import Resource
+from flask_socketio import emit
 import string
 import random
 
 # Local imports
-from config import app, db, api
+from config import app, db, api, socketio
 
 # Add your model imports
 from models import User, Room
+
+@app.route("/http-call")
+def http_call():
+    """return JSON with string data as the value"""
+    data = {'data':'This text was fetched using an HTTP call to server on render'}
+    return jsonify(data)
+
+@socketio.on("connect")
+def connected():
+    """event listener when client connects to the server"""
+    print(request.sid)
+    print("client has connected")
+    emit("connect",{"data":f"id: {request.sid} is connected"})
+
+@socketio.on('data')
+def handle_message(data):
+    """event listener when client types a message"""
+    print("data from the front end: ",str(data))
+    emit("data",{'data':data,'id':request.sid},broadcast=True)
+
+@socketio.on("disconnect")
+def disconnected():
+    """event listener when client disconnects to the server"""
+    print("user disconnected")
+    emit("disconnect",f"user {request.sid} disconnected",broadcast=True)
 
 class Index(Resource):
     def get(self):
@@ -156,4 +182,4 @@ api.add_resource(UserId, '/api/users/<int:id>', endpoint='users_id')
 
 
 if __name__ == '__main__':
-    app.run(port=5555, debug=True)
+    socketio.run(app, port=5555, debug=True)

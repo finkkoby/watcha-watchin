@@ -7,7 +7,7 @@ import AppContext from '../context/AppContext'
 
 function Login() {
     const [error, setError] = useState(false)
-    const { setUser, navigate } = useContext(AppContext)
+    const { setUser, navigate, socket } = useContext(AppContext)
 
     useEffect(() => {
         return () => setError(false)
@@ -42,6 +42,7 @@ function Login() {
                         if (r.ok) {
                             r.json().then(user => {
                                 setUser(user)
+                                socket.emit("data", user)
                                 navigate('/user')
                             })
                         } else {
