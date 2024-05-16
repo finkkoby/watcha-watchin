@@ -42,7 +42,9 @@ function Login() {
                         if (r.ok) {
                             r.json().then(user => {
                                 setUser(user)
-                                socket.emit("data", user)
+                                if (user) {
+                                    socket.emit("data", user)
+                                }
                                 navigate('/user')
                             })
                         } else {

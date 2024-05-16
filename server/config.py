@@ -29,6 +29,6 @@ db.init_app(app)
 api = Api(app)
 
 CORS(app,resources={r"/*":{"origins":"*"}})
-socketio = SocketIO(app,cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 bcrypt = Bcrypt(app)

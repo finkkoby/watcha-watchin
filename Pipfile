@@ -13,6 +13,7 @@ sqlalchemy-serializer = "*"
 gunicorn = "*"
 honcho = "*"
 faker = "*"
+python-socketio = "*"
 
 [dev-packages]
 
