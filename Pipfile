@@ -15,6 +15,7 @@ honcho = "*"
 faker = "*"
 python-socketio = "*"
 flask-socketio = "*"
+eventlet = "*"
 
 [dev-packages]
 
