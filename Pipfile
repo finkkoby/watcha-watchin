@@ -14,6 +14,7 @@ gunicorn = "*"
 honcho = "*"
 faker = "*"
 python-socketio = "*"
+flask-socketio = "*"
 
 [dev-packages]
 
