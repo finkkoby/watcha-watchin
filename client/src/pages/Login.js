@@ -7,7 +7,11 @@ import AppContext from '../context/AppContext'
 
 function Login() {
     const [error, setError] = useState(false)
-    const { setUser, navigate, socket } = useContext(AppContext)
+    const { user, setUser, navigate, socket } = useContext(AppContext)
+
+    if (user) {
+        navigate('/user')
+    }
 
     useEffect(() => {
         return () => setError(false)

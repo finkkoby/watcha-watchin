@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import * as yup from 'yup'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
@@ -6,13 +6,13 @@ import { Formik, Form, Field, ErrorMessage } from 'formik'
 import AppContext from '../context/AppContext'
 
 function Join() {
-
     const { setRoom, navigate, setGuest } = useContext(AppContext)
 
     const formSchema = yup.object().shape({
         name: yup.string().required(),
         roomCode: yup.string().required()
     })
+
 
     return (
         <div className='form-container'>

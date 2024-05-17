@@ -21,16 +21,23 @@ function App() {
   const [user, setUser] = useState(null)
   const [guest, setGuest] = useState(null)
   const [room, setRoom] = useState(null)
+  const [socket, setSocket] = useState(null)
   const navigate = useNavigate()
 
   useEffect(() => {
-    const socket = io()
+    const socketInstance = io()
 
-    socket.on('connect', () => {
+    setSocket(socketInstance)
+
+    socketInstance.on('connect', () => {
         console.log('connected')
     })
+
+    socketInstance.on('joined', (data) => {
+      console.log(data)
+    })
   
-    socket.on('disconnect', () => {
+    socketInstance.on('disconnect', () => {
         console.log('disconnected')
     })
   }, [])
@@ -101,6 +108,7 @@ function App() {
           setRoom: setRoom,
           guest: guest,
           setGuest: setGuest,
+          socket: socket
         }
       }>
         <Routes>

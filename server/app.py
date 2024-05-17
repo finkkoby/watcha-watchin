@@ -16,6 +16,12 @@ from models import User, Room, Guest
 def connect(sid, environ, auth):
     print('connect ', sid)
 
+@sio.on('join', namespace='/join')
+def join(sid, data):
+    sio.enter_room(sid, room=data['name'], namespace='/join')
+    sio.emit('joined', data['name'], room=data['name'], namespace='/join')
+    print(sid, ' joined ', data['name'])
+
 
 class Index(Resource):
     def get(self):
