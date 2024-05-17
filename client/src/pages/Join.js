@@ -7,7 +7,7 @@ import AppContext from '../context/AppContext'
 
 function Join() {
 
-    const { setRoom, navigate } = useContext(AppContext)
+    const { setRoom, navigate, setGuest } = useContext(AppContext)
 
     const formSchema = yup.object().shape({
         name: yup.string().required(),
@@ -35,6 +35,7 @@ function Join() {
                     }).then(r => {
                         if (r.ok) {
                             r.json().then(res => {
+                                setGuest(res)
                                 setRoom(res.room)
                                 navigate(`/guest/room/${res.room.id}`)
                             })

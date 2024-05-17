@@ -25,7 +25,7 @@ class Index(Resource):
 def check_login():
     if request.path.startswith('/api'):
         if not session.get('user_id') \
-            and request.endpoint not in ['login', 'signup', 'rooms_guest_join']:
+            and request.endpoint not in ['login', 'signup', 'rooms_guest_join', 'guests_id']:
             return {'message': 'user not logged in'}, 401
     
 class CheckSession(Resource):
@@ -155,6 +155,26 @@ class GuestJoinRoom(Resource):
             db.session.add(guest)
             db.session.commit()
         return guest.to_dict(), 200
+
+class GuestsId(Resource):
+    def get(self, id):
+        try:
+            guest = Guest.query.filter(Guest.id == id).first()
+            if guest:
+                return guest.to_dict(), 200
+        except:
+                return {'message': 'guest does not exist'}, 400
+        
+    def delete(self, id):
+        try:
+            guest = Guest.query.filter(Guest.id == id).first()
+            if guest:
+                db.session.delete(guest)
+                db.session.commit()
+                return {'message': 'guest deleted'}, 200
+        except:
+            return {'message': 'guest does not exist'}, 400
+            
         
 class RoomsId(Resource):
     def get(self, id, code):
@@ -177,6 +197,7 @@ api.add_resource(Signup, '/api/signup', endpoint='signup')
 api.add_resource(NewRoom, '/api/rooms/new', endpoint='rooms_new')
 api.add_resource(JoinRoom, '/api/rooms/join', endpoint='rooms_join')
 api.add_resource(GuestJoinRoom, '/api/rooms/guest_join', endpoint='rooms_guest_join')
+api.add_resource(GuestsId, '/api/guests/<int:id>', endpoint='guests_id')
 api.add_resource(RoomsId, '/api/rooms/<int:id>/<string:code>', endpoint='rooms_id')
 api.add_resource(UserId, '/api/users/<int:id>', endpoint='users_id')
 

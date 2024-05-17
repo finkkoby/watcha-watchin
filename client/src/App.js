@@ -19,9 +19,9 @@ import AppContext from './context/AppContext'
 
 function App() {
   const [user, setUser] = useState(null)
+  const [guest, setGuest] = useState(null)
   const [room, setRoom] = useState(null)
   const navigate = useNavigate()
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const socket = io()
@@ -98,7 +98,9 @@ function App() {
           navigate: navigate,
           handleUpdate: handleUpdate,
           room: room,
-          setRoom: setRoom
+          setRoom: setRoom,
+          guest: guest,
+          setGuest: setGuest,
         }
       }>
         <Routes>
