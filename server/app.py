@@ -3,40 +3,19 @@
 # Remote library imports
 from flask import request, session, jsonify
 from flask_restful import Resource
-from flask_socketio import emit
 import string
 import random
 
 # Local imports
-from config import app, db, api, socketio
+from config import app, db, api, sio
 
 # Add your model imports
-from models import User, Room
+from models import User, Room, Guest
 
-@app.route("/http-call")
-def http_call():
-    """return JSON with string data as the value"""
-    data = {'data':'This text was fetched using an HTTP call to server on render'}
-    return jsonify(data)
+@sio.event
+def connect(sid, environ, auth):
+    print('connect ', sid)
 
-@socketio.on("connect")
-def connected():
-    """event listener when client connects to the server"""
-    print(request.sid)
-    print("client has connected")
-    emit("connect",{"data":f"id: {request.sid} is connected"})
-
-@socketio.on('data')
-def handle_message(data):
-    """event listener when client types a message"""
-    print("data from the front end: ",str(data))
-    emit("data",{'data':data,'id':request.sid},broadcast=True)
-
-@socketio.on("disconnect")
-def disconnected():
-    """event listener when client disconnects to the server"""
-    print("user disconnected")
-    emit("disconnect",f"user {request.sid} disconnected",broadcast=True)
 
 class Index(Resource):
     def get(self):
@@ -46,7 +25,7 @@ class Index(Resource):
 def check_login():
     if request.path.startswith('/api'):
         if not session.get('user_id') \
-            and request.endpoint not in ['login', 'signup']:
+            and request.endpoint not in ['login', 'signup', 'rooms_guest_join']:
             return {'message': 'user not logged in'}, 401
     
 class CheckSession(Resource):
@@ -156,6 +135,26 @@ class JoinRoom(Resource):
                     return {'message': 'could not locate room -- try again'}, 400
         except:
             return {'message': 'user not found'}, 400
+
+class GuestJoinRoom(Resource):
+    def post(self):
+        json = request.get_json()
+        try:
+            room = Room.query.filter(Room.code == json['roomCode']).first()
+            if room:
+                try:
+                    guest = Guest(
+                        name=json['name'],
+                        room=room
+                    )
+                except:
+                    return {'message': 'could not create guest -- try again'}, 400
+        except:
+            return {'message': 'room does not exist'}, 400
+        if guest:
+            db.session.add(guest)
+            db.session.commit()
+        return guest.to_dict(), 200
         
 class RoomsId(Resource):
     def get(self, id, code):
@@ -177,9 +176,10 @@ api.add_resource(Logout, '/api/logout', endpoint='logout')
 api.add_resource(Signup, '/api/signup', endpoint='signup')
 api.add_resource(NewRoom, '/api/rooms/new', endpoint='rooms_new')
 api.add_resource(JoinRoom, '/api/rooms/join', endpoint='rooms_join')
+api.add_resource(GuestJoinRoom, '/api/rooms/guest_join', endpoint='rooms_guest_join')
 api.add_resource(RoomsId, '/api/rooms/<int:id>/<string:code>', endpoint='rooms_id')
 api.add_resource(UserId, '/api/users/<int:id>', endpoint='users_id')
 
 
 if __name__ == '__main__':
-    socketio.run(app, port=5555, debug=True)
+    app.run(port=5555, debug=True)

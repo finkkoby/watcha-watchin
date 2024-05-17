@@ -14,7 +14,10 @@ function ViewingRoom() {
     }
 
     useEffect(() => {
-        return () => handleUpdate({...user, "room": null})
+        return (() => {
+            if (user) {
+                handleUpdate({...user, "room": null})
+            }})
     }, [])
 
     

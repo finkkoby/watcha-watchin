@@ -54,12 +54,31 @@ class Room(db.Model, SerializerMixin):
 
     # Relationships
     users = db.relationship("User", back_populates="room")
+    guests = db.relationship("Guest", back_populates="room")
 
     # Serialize Rules
-    serialize_rules = ("-users.room",)
+    serialize_rules = ("-users.room", "-guests.room")
 
     # Validations
 
+
+    # Other Methods
+
+class Guest(db.Model, SerializerMixin):
+    __tablename__ = 'guests'
+
+    # Database Schema
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    room_id = db.Column(db.Integer, db.ForeignKey('rooms.id'))
+
+    # Relationships
+    room = db.relationship("Room", back_populates="guests")
+
+    # Serialize Rules
+    serialize_rules = ("-room.guests",)
+
+    # Validations
 
     # Other Methods
 

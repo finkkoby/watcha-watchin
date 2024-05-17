@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
-import { io } from "socket.io-client";
+import io from 'socket.io-client'
 
 import './css/App.css'
 
@@ -14,41 +14,26 @@ import UserDashboard from './pages/UserDashboard'
 import NewRoom from './pages/NewRoom'
 import ViewingRoom from './pages/ViewingRoom'
 import JoinRoom from './pages/JoinRoom'
+import GuestHome from './pages/GuestHome'
 import AppContext from './context/AppContext'
 
 function App() {
   const [user, setUser] = useState(null)
   const [room, setRoom] = useState(null)
   const navigate = useNavigate()
-  const [socketInstance, setSocketInstance] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      const socket = io("localhost:5555/", {
-        transports: ["websocket"],
-        cors: {
-          origin: "http://localhost:4000/",
-        },
-      });
+    const socket = io()
 
-      setSocketInstance(socket);
-
-      socket.on("connect", (data) => {
-        console.log(data);
-      });
-
-      setLoading(false);
-
-      socket.on("disconnect", (data) => {
-        console.log(data);
-      });
-
-      return function cleanup() {
-        socket.disconnect();
-      };
-    }
-  }, [user]);
+    socket.on('connect', () => {
+        console.log('connected')
+    })
+  
+    socket.on('disconnect', () => {
+        console.log('disconnected')
+    })
+  }, [])
 
   useEffect(() => {
     fetch('/api/check_session')
@@ -113,8 +98,7 @@ function App() {
           navigate: navigate,
           handleUpdate: handleUpdate,
           room: room,
-          setRoom: setRoom,
-          socket: socketInstance
+          setRoom: setRoom
         }
       }>
         <Routes>
@@ -123,6 +107,9 @@ function App() {
             <Route path='login' element={<Login />} />
             <Route path='signup' element={<Signup />} />
             <Route path='join' element={<Join />} />
+          </Route>
+          <Route path='/guest' element={<GuestHome />} >
+            <Route path='/guest/room/:id' element={<ViewingRoom />} />
           </Route>
           <Route path='/user' element={<UserHome />} >
             <Route path='/user' element={<UserDashboard />} />
