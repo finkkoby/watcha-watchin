@@ -11,6 +11,12 @@ function UserHome() {
     const { pathname } = useLocation()
 
     useEffect(() => {
+        if (!user) {
+            navigate('/login')
+        }
+    })
+
+    useEffect(() => {
         fetch('/api/check_session')
             .then((response) => {
                  if (!response.ok) {

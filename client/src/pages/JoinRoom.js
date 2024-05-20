@@ -15,7 +15,6 @@ function JoinRoom() {
     }, [])
 
     const formSchema = yup.object().shape({
-        name: yup.string().required("please enter a name"),
         roomCode: yup.string().required("please enter a room code")
     })
 
@@ -23,7 +22,6 @@ function JoinRoom() {
         <div className='form-container page-body'>
             <Formik
                 initialValues={{
-                    name: '',
                     roomCode: ''
                 }}
                 validationSchema={formSchema}
@@ -34,7 +32,6 @@ function JoinRoom() {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            name: values.name,
                             roomCode: values.roomCode
                         })
                     }).then(r => {
@@ -55,12 +52,6 @@ function JoinRoom() {
             >
                 {props => (
                     <Form>
-                        <label htmlFor="name">
-                            name
-                            <Field name="name" placeholder="required" />
-                        </label>
-                        <ErrorMessage name="name" component="p" />
-
                         <label htmlFor="room-code">
                             room code
                             <Field name="roomCode" placeholder="required" />

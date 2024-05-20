@@ -18,9 +18,16 @@ def connect(sid, environ, auth):
 
 @sio.on('join', namespace='/join')
 def join(sid, data):
-    sio.enter_room(sid, room=data['name'], namespace='/join')
-    sio.emit('joined', data['name'], room=data['name'], namespace='/join')
-    print(sid, ' joined ', data['name'])
+    sio.enter_room(sid, room=data, namespace='/join')
+    sio.emit('joined', data, room=data, namespace='/join')
+    print(sid, ' joined ', data)
+
+@sio.on('leave', namespace='/join')
+def leave(sid, data):
+    sio.leave_room(sid, room=data, namespace='/join')
+    sio.emit('left', data, room=data, namespace='/join')
+    print(sid, ' left ', data, '')
+    sio.disconnect(sid, namespace='/join')
 
 
 class Index(Resource):

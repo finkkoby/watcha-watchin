@@ -5,11 +5,7 @@ import io from 'socket.io-client'
 import AppContext from '../context/AppContext'
 
 function ViewingRoom() {
-    const { id } = useParams()
     const [error, setError] = useState(false)
-    const [users, setUsers] = useState([])
-    const [guests, setGuests] = useState([])
-    const [socket, setSocket] = useState(null)
 
     const { user, room, handleUpdate, navigate } = useContext(AppContext)
 
@@ -20,26 +16,28 @@ function ViewingRoom() {
     useEffect(() => {
         const s = io('/join')
 
-        setSocket(s)
-
         s.on('connect', () => {
             console.log('connected to join namespace')
-            s.emit('join', room)
+            s.emit('join', room.name)
         })
 
-        s.on('joined', data => {
+        s.on('joined', (data) => {
             console.log(data)
         })
 
-        s.on('disconnected', () => {
+        s.on('left', data => {
+            console.log(`left ${room.name}`)
+        })
+
+        s.on('disconnect', () => {
             console.log('disconnected from join namespace')
         })
 
         return () => {
-            s.disconnect()
+            s.emit('leave', room.name)
         }
 
-    }, [])
+    }, [room])
 
     useEffect(() => {
         return (() => {
@@ -47,14 +45,6 @@ function ViewingRoom() {
                 handleUpdate({...user, "room": null})
             }})
     }, [])
-
-    const userList = users.map(user => {
-        return (
-            <li key={user.id}>
-                {user.name}
-            </li>
-        )
-    })
 
     
     return (
@@ -66,7 +56,6 @@ function ViewingRoom() {
                 </div>
                 <div id='vr-users-container'>
                     <ul id='vr-user-list'>
-                        {userList}
                     </ul>
                 </div>
             </div>
