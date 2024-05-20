@@ -21,18 +21,18 @@ class User(db.Model, SerializerMixin):
     first_name = db.Column(db.String)
     last_name = db.Column(db.String)
     age = db.Column(db.Integer)
-    host_id = db.Column(db.Integer, db.ForeignKey('hosts.id'))
 
     # Relationships
-    room = db.relationship("Room", back_populates="users")
-    host = db.relationship("Host", uselist=False, back_populates="user")
+    join = db.relationship("Join", uselist=False, back_populates="user")
     recents = db.relationship("Recent", back_populates="user")
 
     videos = association_proxy("recents", 'video',
                                creator=lambda video_obj: Recent(video=video_obj))
+    room = association_proxy("join", "room",
+                             creator=lambda room_obj: Join(room=room_obj))
 
     # Serialize Rules
-    serialize_rules = ("-room.users", "-recents.user", "-host.user")
+    serialize_rules = ("-room.users", "-recents.user", "-join.user")
 
     # Validations
     @hybrid_property
@@ -49,20 +49,21 @@ class User(db.Model, SerializerMixin):
     def authenticate(self, password):
         return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
 
-class Host(db.Model, SerializerMixin):
-    __tablename__ = 'hosts'
+class Join(db.Model, SerializerMixin):
+    __tablename__ = 'joins'
 
     # Database Schema
     id = db.Column(db.Integer, primary_key=True)
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    host = db.Column(db.Boolean, nullable=False, default=False)
 
     # Relationships
-    room = db.relationship("Room", back_populates="host")
-    user = db.relationship("User", back_populates="room")
+    room = db.relationship("Room", back_populates="join")
+    user = db.relationship("User", back_populates="join")
 
     # Serialize Rules
-    serialize_rules = ("-room.host", "-user.room")
+    serialize_rules = ("-room.join", "-user.join")
     
 class Room(db.Model, SerializerMixin):
     __tablename__ = 'rooms'
@@ -74,10 +75,14 @@ class Room(db.Model, SerializerMixin):
     video_id = db.Column(db.Integer, db.ForeignKey('videos.id'), default=None)
 
     # Relationships
-    users = db.relationship("User", back_populates="room")
     guests = db.relationship("Guest", back_populates="room")
     video = db.relationship("Video", back_populates="rooms")
-    host = db.relationship("User", uselist=False, back_populates="room")
+    joins = db.relationship("Join", back_populates="room")
+
+    users = association_proxy("joins", "user",
+                              creator=lambda user_obj: Join(user=user_obj))
+
+
 
     # Serialize Rules
     serialize_rules = ("-users.room", "-guests.room", "-host.room")

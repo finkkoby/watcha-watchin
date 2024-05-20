@@ -129,8 +129,7 @@ class NewRoom(Resource):
             user = User.query.filter(User.id == session.get('user_id')).first()
             room = Room(
                 name=json['name'],
-                code=code,
-                host=user
+                code=code
             )
             if room:
                 user.room = room
