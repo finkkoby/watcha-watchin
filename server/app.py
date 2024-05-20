@@ -126,12 +126,13 @@ class NewRoom(Resource):
                         string.digits, k=5))
         name = Room.query.filter(Room.name == json['name']).first()
         if not name:
+            user = User.query.filter(User.id == session.get('user_id')).first()
             room = Room(
                 name=json['name'],
-                code=code
+                code=code,
+                host=user
             )
             if room:
-                user = User.query.filter(User.id == session.get('user_id')).first()
                 user.room = room
             db.session.add(room)
             db.session.commit()

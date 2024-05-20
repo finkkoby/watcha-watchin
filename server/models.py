@@ -21,14 +21,18 @@ class User(db.Model, SerializerMixin):
     first_name = db.Column(db.String)
     last_name = db.Column(db.String)
     age = db.Column(db.Integer)
-    room_id = db.Column(db.String, db.ForeignKey('rooms.id'), default=None,)
+    host_id = db.Column(db.Integer, db.ForeignKey('hosts.id'))
 
     # Relationships
     room = db.relationship("Room", back_populates="users")
+    host = db.relationship("Host", uselist=False, back_populates="user")
     recents = db.relationship("Recent", back_populates="user")
 
+    videos = association_proxy("recents", 'video',
+                               creator=lambda video_obj: Recent(video=video_obj))
+
     # Serialize Rules
-    serialize_rules = ("-room.users", "-recents.user")
+    serialize_rules = ("-room.users", "-recents.user", "-host.user")
 
     # Validations
     @hybrid_property
@@ -44,6 +48,21 @@ class User(db.Model, SerializerMixin):
     # Other Methods
     def authenticate(self, password):
         return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
+
+class Host(db.Model, SerializerMixin):
+    __tablename__ = 'hosts'
+
+    # Database Schema
+    id = db.Column(db.Integer, primary_key=True)
+    room_id = db.Column(db.Integer, db.ForeignKey('rooms.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    # Relationships
+    room = db.relationship("Room", back_populates="host")
+    user = db.relationship("User", back_populates="room")
+
+    # Serialize Rules
+    serialize_rules = ("-room.host", "-user.room")
     
 class Room(db.Model, SerializerMixin):
     __tablename__ = 'rooms'
@@ -58,9 +77,10 @@ class Room(db.Model, SerializerMixin):
     users = db.relationship("User", back_populates="room")
     guests = db.relationship("Guest", back_populates="room")
     video = db.relationship("Video", back_populates="rooms")
+    host = db.relationship("User", uselist=False, back_populates="room")
 
     # Serialize Rules
-    serialize_rules = ("-users.room", "-guests.room")
+    serialize_rules = ("-users.room", "-guests.room", "-host.room")
 
     # Validations
 
@@ -118,6 +138,9 @@ class Video(db.Model, SerializerMixin):
     # Relationships
     recents = db.relationship("Recent", back_populates="video")
     rooms = db.relationship("Room", back_populates="video")
+
+    users = association_proxy("recents", "user",
+                              creator=lambda user_obj: Recent(user=user_obj))
 
 
     # Serialize Rules
