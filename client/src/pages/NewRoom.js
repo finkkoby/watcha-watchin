@@ -8,10 +8,12 @@ import AppContext from '../context/AppContext'
 function NewRoom() {
     const [error, setError] = useState(false)
 
-    const { user, room, setRoom, navigate, handleUpdate } = useContext(AppContext)
+    const { setRoom, navigate, setJoin } = useContext(AppContext)
 
     useEffect(() => {
-        return () => setError(false)
+        return () => {
+            setError(false)
+        }
     }, [])
 
     const formSchema = yup.object().shape({
@@ -37,9 +39,8 @@ function NewRoom() {
                     }).then(r => {
                         if (r.ok) {
                             r.json().then(res => {
-                                const newUser = {...user, "room": res}
-                                setRoom(res)
-                                handleUpdate(newUser)
+                                setRoom(res.room)
+                                setJoin(res)
                                 navigate(`/user/room/${res.id}`)
                             })
                         } else {

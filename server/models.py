@@ -23,7 +23,7 @@ class User(db.Model, SerializerMixin):
     age = db.Column(db.Integer)
 
     # Relationships
-    join = db.relationship("Join", uselist=False, back_populates="user")
+    join = db.relationship("Join", back_populates="user")
     recents = db.relationship("Recent", back_populates="user")
 
     videos = association_proxy("recents", 'video',
@@ -32,7 +32,7 @@ class User(db.Model, SerializerMixin):
                              creator=lambda room_obj: Join(room=room_obj))
 
     # Serialize Rules
-    serialize_rules = ("-room.users", "-recents.user", "-join.user")
+    serialize_rules = ("-recents.user", "-join.user")
 
     # Validations
     @hybrid_property
@@ -59,11 +59,11 @@ class Join(db.Model, SerializerMixin):
     host = db.Column(db.Boolean, nullable=False, default=False)
 
     # Relationships
-    room = db.relationship("Room", back_populates="join")
+    room = db.relationship("Room", back_populates="joins")
     user = db.relationship("User", back_populates="join")
 
     # Serialize Rules
-    serialize_rules = ("-room.join", "-user.join")
+    serialize_rules = ("-room.joins", "-user.join")
     
 class Room(db.Model, SerializerMixin):
     __tablename__ = 'rooms'

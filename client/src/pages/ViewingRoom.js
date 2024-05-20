@@ -10,7 +10,7 @@ import ViewingRoomLoading from '../components/ViewingRoomLoading'
 function ViewingRoom() {
     const [error, setError] = useState(false)
 
-    const { user, room, setRoom, handleUpdate, navigate } = useContext(AppContext)
+    const { user, room, setRoom, join, setJoin, navigate } = useContext(AppContext)
 
     useEffect(() => {
         if (room) {
@@ -40,9 +40,23 @@ function ViewingRoom() {
                 .then(r => {
                     if (r.ok) {
                         r.json().then(res => {
-                            const newUser = {...user, "room": null}
                             setRoom(null)
-                            handleUpdate(newUser)
+                            fetch(`/api/joins/${join.id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }})
+                            .then(r => {
+                                if (r.ok) {
+                                    r.json().then(res => {
+                                        setJoin(null)
+                                    })
+                                } else {
+                                    r.json().then(res => {
+                                        console.log(res.message)
+                                    })
+                                }
+                            })
                         })
                     } else {
                         r.json().then(res => {

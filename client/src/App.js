@@ -21,10 +21,9 @@ function App() {
   const [user, setUser] = useState(null)
   const [guest, setGuest] = useState(null)
   const [room, setRoom] = useState(null)
+  const [join, setJoin] = useState(null)
   const [socket, setSocket] = useState(null)
   const navigate = useNavigate()
-
-  console.log(room)
 
   useEffect(() => {
     const socketInstance = io()
@@ -124,7 +123,8 @@ function App() {
           setRoom: setRoom,
           guest: guest,
           setGuest: setGuest,
-          socket: socket
+          join: join,
+          setJoin: setJoin
         }
       }>
         <Routes>

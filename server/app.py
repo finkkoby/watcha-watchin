@@ -10,7 +10,7 @@ import random
 from config import app, db, api, sio
 
 # Add your model imports
-from models import User, Room, Guest
+from models import User, Room, Guest, Join
 
 @sio.event
 def connect(sid, environ, auth):
@@ -108,8 +108,9 @@ class UserId(Resource):
             user = User.query.filter(User.id == id).first()
             if user:
                 try:
-                    room = Room.query.filter(Room.id == json['room']['id']).first()
-                    user.room = room
+                    room = Room.query.filter(Room.id == session.get('room_id')).first()
+                    if room:
+                        user.room = room
                 except:
                     user.room = None
                 db.session.commit()
@@ -132,11 +133,16 @@ class NewRoom(Resource):
                 code=code
             )
             if room:
-                user.room = room
+                join = Join(
+                    user=user,
+                    room=room,
+                    host=True,
+                )
+            db.session.add(join)
             db.session.add(room)
             db.session.commit()
             session['room_id'] = room.id
-            return room.to_dict(), 200
+            return join.to_dict(), 200
         else:
             return {'message': 'room name already exists'}, 400
         
@@ -149,10 +155,14 @@ class JoinRoom(Resource):
                 try:
                     room = Room.query.filter(Room.code == json['roomCode']).first()
                     if room:
-                        user.room = room
+                        join = Join(
+                            user=user,
+                            room=room
+                        )
+                        db.session.add(join)
                         db.session.commit()
                         session['room_id'] = room.id
-                        return room.to_dict(), 200
+                        return join.to_dict(), 200
                 except:
                     return {'message': 'could not locate room -- try again'}, 400
         except:
@@ -214,7 +224,17 @@ class RoomsId(Resource):
                 return {'message': 'room code does not match'}, 400
         else:
             return {'message': 'room does not exist'}, 400
-        
+
+class JoinsId(Resource):
+    def delete(self, id):
+        try:
+            join = Join.query.filter(Join.id == id).first()
+            if join:
+                db.session.delete(join)
+                db.session.commit()
+                return {'message': 'join deleted'}, 200
+        except:
+            return {'message': 'join does not exist'}, 400
 
     
 api.add_resource(Index, '/', endpoint='index')
@@ -230,6 +250,7 @@ api.add_resource(LeaveRoom, '/api/rooms/leave', endpoint='rooms_leave')
 api.add_resource(GuestsId, '/api/guests/<int:id>', endpoint='guests_id')
 api.add_resource(RoomsId, '/api/rooms/<int:id>/<string:code>', endpoint='rooms_id')
 api.add_resource(UserId, '/api/users/<int:id>', endpoint='users_id')
+api.add_resource(JoinsId, '/api/joins/<int:id>', endpoint='joins_id')
 
 
 if __name__ == '__main__':
