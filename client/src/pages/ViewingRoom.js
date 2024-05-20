@@ -7,43 +7,48 @@ import AppContext from '../context/AppContext'
 function ViewingRoom() {
     const [error, setError] = useState(false)
 
-    const { user, room, handleUpdate, navigate } = useContext(AppContext)
-
-    if (!room) {
-        navigate('/')
-    }
+    const { user, room, setRoom, handleUpdate, navigate } = useContext(AppContext)
 
     useEffect(() => {
-        const s = io('/join')
+        if (room) {
+            const s = io('/join')
 
-        s.on('connect', () => {
-            console.log('connected to join namespace')
-            s.emit('join', room.name)
-        })
+            s.on('connect', () => {
+                console.log('connected to join namespace')
+                s.emit('join', room.name)
+            })
 
-        s.on('joined', (data) => {
-            console.log(data)
-        })
+            s.on('joined', (data) => {
+                console.log(data)
+            })
 
-        s.on('left', data => {
-            console.log(`left ${room.name}`)
-        })
+            s.on('left', data => {
+                console.log(`left ${room.name}`)
+            })
 
-        s.on('disconnect', () => {
-            console.log('disconnected from join namespace')
-        })
+            s.on('disconnect', () => {
+                console.log('disconnected from join namespace')
+            })
 
-        return () => {
-            s.emit('leave', room.name)
+            return (() => {
+                s.emit('leave', room.name)
+                fetch('/api/rooms/leave')
+                .then(r => {
+                    if (r.ok) {
+                        r.json().then(res => {
+                            const newUser = {...user, "room": null}
+                            setRoom(null)
+                            handleUpdate(newUser)
+                        })
+                    } else {
+                        r.json().then(res => {
+                            console.log(res)
+                            setError(true)
+                        })
+                    }
+                })
+            })
         }
-
-    }, [room])
-
-    useEffect(() => {
-        return (() => {
-            if (user) {
-                handleUpdate({...user, "room": null})
-            }})
     }, [])
 
     
@@ -51,15 +56,21 @@ function ViewingRoom() {
         <div className='viewing-room-container'>
             <div id='vr-column-1'>
                 <div id='vr-room-info'>
-                    <h3 id='room-name'>{room.name}</h3>
-                    <p id='room-code'>{room.code}</p>
+                    <h3 id='room-name'>{room ? room.name : 'loading...'}</h3>
+                    <h5 id='room-code'>{room ? room.code : 'loading...'}</h5>
                 </div>
                 <div id='vr-users-container'>
                     <ul id='vr-user-list'>
+                        <li>user1</li>
+                        <li>user2</li>
+                        <li>user3</li>
+                        <li>user4</li>
                     </ul>
                 </div>
             </div>
-            <div id='vr-column-2'></div>
+            <div id='vr-column-2'>
+                <iframe height='315' width='420'></iframe>
+            </div>
             <div id='vr-column-3'></div>
         </div>
     )

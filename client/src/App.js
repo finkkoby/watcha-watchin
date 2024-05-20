@@ -56,6 +56,20 @@ function App() {
     })
   }, [])
 
+  useEffect(() => {
+    fetch('/api/check_room')
+      .then(r => {
+        if (r.ok) {
+          r.json().then(room => setRoom(room))
+        } else {
+          r.json().then(res => {
+            console.log(res)
+            setRoom(null)
+          })
+        }
+      })
+  }, [])
+
   function handleUpdate(user) {
     fetch(`/api/users/${user.id}`, {
       method: 'PATCH',

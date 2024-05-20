@@ -3,14 +3,18 @@ import { useContext } from "react";
 import AppContext from "../context/AppContext";
 
 function UserDashboard() {
-    const { user, navigate } = useContext(AppContext);
+    const { user, room, navigate } = useContext(AppContext);
 
     return (
         <div className='dash-container'>
             <div id='column1' className='dash-column'>
                 <div className='dash-box' id='button-bar'>
-                    <button id='create-room' onClick={() => navigate('/user/room/new')}>create room</button>
-                    <button id='join-room' onClick={() => navigate('/user/room/join')}>join room</button>
+                    { room ? <button id='rejoin' onClick={() => navigate(`/user/room/${room.id}`)}>rejoin {room.name}</button> :
+                    <>
+                        <button id='create-room' onClick={() => navigate('/user/room/new')}>create room</button>
+                        <button id='join-room' onClick={() => navigate('/user/room/join')}>join room</button>
+                    </>
+                    }
                 </div>
                 <div className='dash-box' id='recent-videos'>
                     <h3>recent videos</h3>

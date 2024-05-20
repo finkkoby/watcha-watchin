@@ -44,9 +44,16 @@ def check_login():
 class CheckSession(Resource):
     def get(self):
         if session.get('user_id'):
-            return User.query.get(session['user_id']).to_dict(), 200
+            return User.query.filter(User.id == session.get('user_id')).first().to_dict(), 200
         else:
             return {'message': 'user not logged in'}, 401
+        
+class CheckRoom(Resource):
+    def get(self):
+        if session.get('room_id'):
+            return Room.query.filter(Room.id == session.get('room_id')).first().to_dict(), 200
+        else:
+            return {'message': 'no room selected'}, 401
     
 class Login(Resource):
     def post(self):
@@ -128,6 +135,7 @@ class NewRoom(Resource):
                 user.room = room
             db.session.add(room)
             db.session.commit()
+            session['room_id'] = room.id
             return room.to_dict(), 200
         else:
             return {'message': 'room name already exists'}, 400
@@ -143,6 +151,7 @@ class JoinRoom(Resource):
                     if room:
                         user.room = room
                         db.session.commit()
+                        session['room_id'] = room.id
                         return room.to_dict(), 200
                 except:
                     return {'message': 'could not locate room -- try again'}, 400
@@ -168,6 +177,12 @@ class GuestJoinRoom(Resource):
             db.session.add(guest)
             db.session.commit()
         return guest.to_dict(), 200
+
+class LeaveRoom(Resource):
+    def get(self):
+        session.pop('room_id', None)
+        return {'message': 'Left room'}, 200
+
 
 class GuestsId(Resource):
     def get(self, id):
@@ -204,12 +219,14 @@ class RoomsId(Resource):
     
 api.add_resource(Index, '/', endpoint='index')
 api.add_resource(CheckSession, '/api/check_session', endpoint='check_session')
+api.add_resource(CheckRoom, '/api/check_room', endpoint='check_room')
 api.add_resource(Login, '/api/login', endpoint='login')
 api.add_resource(Logout, '/api/logout', endpoint='logout')
 api.add_resource(Signup, '/api/signup', endpoint='signup')
 api.add_resource(NewRoom, '/api/rooms/new', endpoint='rooms_new')
 api.add_resource(JoinRoom, '/api/rooms/join', endpoint='rooms_join')
 api.add_resource(GuestJoinRoom, '/api/rooms/guest_join', endpoint='rooms_guest_join')
+api.add_resource(LeaveRoom, '/api/rooms/leave', endpoint='rooms_leave')
 api.add_resource(GuestsId, '/api/guests/<int:id>', endpoint='guests_id')
 api.add_resource(RoomsId, '/api/rooms/<int:id>/<string:code>', endpoint='rooms_id')
 api.add_resource(UserId, '/api/users/<int:id>', endpoint='users_id')
