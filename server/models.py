@@ -25,9 +25,10 @@ class User(db.Model, SerializerMixin):
 
     # Relationships
     room = db.relationship("Room", back_populates="users")
+    recents = db.relationship("Recent", back_populates="user")
 
     # Serialize Rules
-    serialize_rules = ("-room.users",)
+    serialize_rules = ("-room.users", "-recents.user")
 
     # Validations
     @hybrid_property
@@ -51,10 +52,12 @@ class Room(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     code = db.Column(db.String(5), unique=True)
+    video_id = db.Column(db.Integer, db.ForeignKey('videos.id'), default=None)
 
     # Relationships
     users = db.relationship("User", back_populates="room")
     guests = db.relationship("Guest", back_populates="room")
+    video = db.relationship("Video", back_populates="rooms")
 
     # Serialize Rules
     serialize_rules = ("-users.room", "-guests.room")
@@ -82,4 +85,46 @@ class Guest(db.Model, SerializerMixin):
 
     # Other Methods
 
+
+class Recent(db.Model, SerializerMixin):
+    __tablename__ = 'recents'
+
+    # Database Schema
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    video_id = db.Column(db.Integer, db.ForeignKey('videos.id'))
+
+    # Relationships
+    user = db.relationship("User", back_populates='recents')
+    video = db.relationship("Video", back_populates='recents')
+
+    # Serialize Rules
+    serialize_rules = ("-user.recents", "-video.recents")
+
+
+    # Validations
+
+
+    # Other Methods
+
+
+class Video(db.Model, SerializerMixin):
+    __tablename__ = 'videos'
+
+    # Database Schema
+    id = db.Column(db.Integer, primary_key=True)
+    youtube_id = db.Column(db.String, nullable=False)
+
+    # Relationships
+    recents = db.relationship("Recent", back_populates="video")
+    rooms = db.relationship("Room", back_populates="video")
+
+
+    # Serialize Rules
+    serialize_rules = ('-recents.video',)
+
+    # Validations
+
+
+    # Other Methods
 
