@@ -1,0 +1,45 @@
+h1 {
+    display: block;
+    text-align: center;
+    letter-spacing: 4px;
+}
+
+div.viewing-room-container {
+    display: flex;
+    flex-direction: row;
+    width: 90%;
+    margin: auto;
+}
+
+div.vr-column {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    background-color: var(--two);
+    margin: 10px;
+    border: solid var(--one) 10px;
+    overflow: scroll;
+}
+div#vr-column-1 {
+    width: 10%;
+}
+
+div#vr-column-1  h1{
+    display: block;
+    text-align: center;
+}
+
+div#vr-column-3 {
+    width: 20%;
+}
+
+div#vr-column-2 {
+    width: 70%;
+}
+
+div#vr-column-2 iframe {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16 / 9;
+}
+

@@ -24,6 +24,8 @@ function App() {
   const [socket, setSocket] = useState(null)
   const navigate = useNavigate()
 
+  console.log(room)
+
   useEffect(() => {
     const socketInstance = io()
 
