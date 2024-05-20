@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import io from 'socket.io-client'
+import YouTube from 'react-youtube'
 
 import AppContext from '../context/AppContext'
 
@@ -69,7 +70,7 @@ function ViewingRoom() {
                 </div>
             </div>
             <div id='vr-column-2'>
-                <iframe height='315' width='420'></iframe>
+                <YouTube videoId='GafXVg0cWck'></YouTube>
             </div>
             <div id='vr-column-3'></div>
         </div>
