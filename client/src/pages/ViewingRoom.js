@@ -5,6 +5,7 @@ import YouTube from 'react-youtube'
 
 import AppContext from '../context/AppContext'
 import '../css/ViewingRoom.css'
+import ViewingRoomLoading from '../components/ViewingRoomLoading'
 
 function ViewingRoom() {
     const [error, setError] = useState(false)
@@ -13,6 +14,7 @@ function ViewingRoom() {
 
     useEffect(() => {
         if (room) {
+
             const s = io('/join')
 
             s.on('connect', () => {
@@ -53,14 +55,18 @@ function ViewingRoom() {
         }
     }, [])
 
+    while (!room) {
+        return <ViewingRoomLoading />
+    }
+
     
     return (
         <>
-            <h1>{room ? room.name : 'loading...'}</h1>
+            <h1>{room.name}</h1>
             <div className='viewing-room-container'>
                 <div id='vr-column-1' className='vr-column'>
                     <div id='vr-room-info'>
-                        <h1 id='room-code'>{room ? room.code.toUpperCase() : 'loading...'}</h1>
+                        <h1 id='room-code'>{room.code}</h1>
                     </div>
                     <div id='vr-users-container'>
                         <ul id='vr-user-list'>

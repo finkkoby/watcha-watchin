@@ -43,3 +43,9 @@ div#vr-column-2 iframe {
     aspect-ratio: 16 / 9;
 }
 
+h1#loading-message {
+    margin: 300px;
+    font-size: 80px;
+    letter-spacing: 15px;
+}
+
