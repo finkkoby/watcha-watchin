@@ -170,6 +170,17 @@ class JoinRoom(Resource):
                     return {'message': 'could not locate room -- try again'}, 400
         except:
             return {'message': 'user not found'}, 400
+    
+    def patch(self):
+        json = request.get_json()
+        try:
+            room = Room.query.filter(Room.id == json['roomId']).first()
+            if room:
+                db.session.commit()
+                session['room_id'] = room.id
+                return room.to_dict(), 200
+        except:
+            return {'message': 'room does not exist'}, 400
 
 class GuestJoinRoom(Resource):
     def post(self):
@@ -221,10 +232,7 @@ class RoomsId(Resource):
     def get(self, id):
         room = Room.query.filter(Room.id == id).first()
         if room:
-            if room.code == code:
-                return room.to_dict(), 200
-            else:
-                return {'message': 'room code does not match'}, 400
+            return room.to_dict(), 200
         else:
             return {'message': 'room does not exist'}, 400
     

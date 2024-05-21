@@ -9,9 +9,11 @@ function Login() {
     const [error, setError] = useState(false)
     const { user, setUser, navigate, socket } = useContext(AppContext)
 
-    if (user) {
-        navigate('/user')
-    }
+    useEffect(() => {
+        if (user) {
+            navigate('/user')
+        }
+    }, [user])
 
     useEffect(() => {
         return () => setError(false)

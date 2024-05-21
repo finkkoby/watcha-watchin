@@ -23,16 +23,16 @@ class User(db.Model, SerializerMixin):
     age = db.Column(db.Integer)
 
     # Relationships
-    join = db.relationship("Join", back_populates="user")
+    joins = db.relationship("Join", back_populates="user")
     recents = db.relationship("Recent", back_populates="user")
 
     videos = association_proxy("recents", 'video',
                                creator=lambda video_obj: Recent(video=video_obj))
-    room = association_proxy("join", "room",
+    rooms = association_proxy("joins", "room",
                              creator=lambda room_obj: Join(room=room_obj))
 
     # Serialize Rules
-    serialize_rules = ("-recents.user", "-join.user")
+    serialize_rules = ("-recents.user", "-join.user", "videos", "rooms", "-rooms.joins", "-rooms.users")
 
     # Validations
     @hybrid_property
@@ -60,10 +60,10 @@ class Join(db.Model, SerializerMixin):
 
     # Relationships
     room = db.relationship("Room", back_populates="joins")
-    user = db.relationship("User", back_populates="join")
+    user = db.relationship("User", back_populates="joins")
 
     # Serialize Rules
-    serialize_rules = ("-room.joins", "-user.join")
+    serialize_rules = ("-room.joins", "-user.joins")
     
 class Room(db.Model, SerializerMixin):
     __tablename__ = 'rooms'
@@ -77,7 +77,7 @@ class Room(db.Model, SerializerMixin):
     # Relationships
     guests = db.relationship("Guest", back_populates="room")
     video = db.relationship("Video", back_populates="rooms")
-    joins = db.relationship("Join", back_populates="room")
+    joins = db.relationship("Join", back_populates="room", cascade='all')
 
     users = association_proxy("joins", "user",
                               creator=lambda user_obj: Join(user=user_obj))
@@ -85,7 +85,7 @@ class Room(db.Model, SerializerMixin):
 
 
     # Serialize Rules
-    serialize_rules = ("-users.room", "-guests.room", "-host.room")
+    serialize_rules = ("-video.room", "-guests.room", "-joins.room")
 
     # Validations
 

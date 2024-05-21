@@ -40,6 +40,9 @@ function JoinRoom() {
                                 console.log(res)
                                 setRoom(res.room)
                                 setJoin(res)
+                                user['rooms'].push(res.room)
+                                user['joins'].push(res)
+                                setUser(user)
                                 navigate(`/user/room/${res.id}`)
                             })
                         } else {

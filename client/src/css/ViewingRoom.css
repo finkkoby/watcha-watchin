@@ -21,7 +21,7 @@ div.vr-column {
     overflow: scroll;
 }
 div#vr-column-1 {
-    width: 10%;
+    width: 15%;
 }
 
 div#vr-column-1  h1{
@@ -30,7 +30,7 @@ div#vr-column-1  h1{
 }
 
 div#vr-column-3 {
-    width: 20%;
+    width: 15%;
 }
 
 div#vr-column-2 {

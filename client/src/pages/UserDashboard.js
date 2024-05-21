@@ -3,7 +3,44 @@ import { useContext } from "react";
 import AppContext from "../context/AppContext";
 
 function UserDashboard() {
-    const { user, room, navigate } = useContext(AppContext);
+    const { user, room, navigate, setRoom, setJoin } = useContext(AppContext);
+
+    while (!user) {
+        return <h1>loading...</h1>
+    }
+
+    function handleEnterRoom(room) {
+        console.log(room)
+        setJoin(user.joins.find(join => join.room.id === room.id))
+        fetch('/api/rooms/join', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                roomId: room.id
+            })
+        }).then(r => {
+            if (r.ok) {
+                r.json().then(res => {
+                    setRoom(res)
+                    navigate(`/user/room/${res.id}`)
+                })
+            } else {
+                r.json().then(res => {
+                    console.log(res.message)
+                })
+            }
+        })
+    }
+
+    const myRooms = user.joins.map(join => {
+        return (
+            <div key={join.id}>
+                <button onClick={() => handleEnterRoom(join.room)}>{join.room.name}</button>
+            </div>
+        )
+    })
 
     return (
         <div className='dash-container'>
@@ -17,12 +54,10 @@ function UserDashboard() {
                     }
                 </div>
                 <div className='dash-box' id='recent-videos'>
-                    <h3>recent videos</h3>
-                    <div id='recent-videos-list'>
-                        <p>video 1</p>
-                        <p>video 2</p>
-                        <p>video 3</p>
-                    </div>
+                    <h3>my rooms</h3>
+                        <div id='my-rooms-list'>
+                            { myRooms }
+                        </div>
                 </div>
             </div>
             <div id='column2' className='dash-column'>
@@ -33,7 +68,15 @@ function UserDashboard() {
                         <p>friend 2</p>
                         <p>friend 3</p>
                     </div>
-                </div>                
+                </div>
+                <div className='dash-box' id='recent-videos'>
+                    <h3>recent videos</h3>
+                    <div id='recent-videos-list'>
+                        <p>video 1</p>
+                        <p>video 2</p>
+                        <p>video 3</p>
+                    </div>
+                </div>
             </div>
         </div>
     )

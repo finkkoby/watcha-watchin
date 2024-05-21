@@ -6,11 +6,12 @@ import YouTube from 'react-youtube'
 import AppContext from '../context/AppContext'
 import '../css/ViewingRoom.css'
 import ViewingRoomLoading from '../components/ViewingRoomLoading'
+import URLForm from '../components/URLForm'
 
 function ViewingRoom() {
     const [error, setError] = useState(false)
 
-    const { user, room, setRoom, join, setJoin, navigate } = useContext(AppContext)
+    const { user, setUser, room, setRoom, join, setJoin, navigate } = useContext(AppContext)
 
     function handleLeave(socket) {
         socket.emit('leave', room.name)
@@ -37,14 +38,15 @@ function ViewingRoom() {
        .then(r => {
             if (r.ok) {
                 r.json().then(res => {
-                    console.log(join)
-                    console.log(user)
-                    if (join.host) {
-                        handleDeleteRoom()
-                    } else {
-                        setRoom(null)
-                        setJoin(null)
-                    }
+                    const newJoins = user.joins.map(j => {
+                        if (j.id !== join.id) {
+                            return j
+                        }
+                    })
+                    setUser({...user, joins : newJoins})
+                    setRoom(null)
+                    setJoin(null)
+                    navigate('/user')
                 })
             } else {
                 r.json().then(res => {
@@ -63,8 +65,20 @@ function ViewingRoom() {
        .then(r => {
         if (r.ok) {
             r.json().then(res => {
+                const newJoins = user.joins.map(j => {
+                    if (j.room.id !== room.id) {
+                        return j
+                    }
+                })
+                const newRooms = user.rooms.map(r => {
+                    if (r.id !== room.id) {
+                        return r
+                    }
+                })
+                setUser({...user, joins : newJoins, rooms : newRooms})
                 setRoom(null)
                 setJoin(null)
+                navigate('/user')
             })
         } else {
             r.json().then(res => {
@@ -97,7 +111,6 @@ function ViewingRoom() {
 
             return (() => {
                 handleLeave(s)
-                handleDeleteJoin()
             })
         }
     }, [])
@@ -123,9 +136,18 @@ function ViewingRoom() {
                             <li>user4</li>
                         </ul>
                     </div>
+                    { join.host ? 
+                    <button id='delete-room' onClick={() => handleDeleteRoom()}>delete room</button> 
+                    : <button id='leave-room' onClick={() => handleDeleteJoin()}>leave room</button> }
                 </div>
                 <div id='vr-column-2' className='vr-column'>
-                    <YouTube videoId='GafXVg0cWck'></YouTube>
+                    { room.video ? (
+                        <YouTube videoId={room.youtube_id}></YouTube>
+                    ) : join.host && !room.video ? (
+                        <URLForm />
+                    ) : (
+                        <h1>waiting for host...</h1>
+                    )}
                 </div>
                 <div id='vr-column-3' className='vr-column'>
                     <div id='chat-container'>
