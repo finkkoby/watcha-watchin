@@ -159,10 +159,13 @@ class JoinRoom(Resource):
                             user=user,
                             room=room
                         )
-                        db.session.add(join)
-                        db.session.commit()
-                        session['room_id'] = room.id
-                        return join.to_dict(), 200
+                        if join:
+                            db.session.add(join)
+                            db.session.commit()
+                            session['room_id'] = room.id
+                            return join.to_dict(), 200
+                    else:
+                        return {'message': 'invalid room code'}, 400
                 except:
                     return {'message': 'could not locate room -- try again'}, 400
         except:
@@ -215,7 +218,7 @@ class GuestsId(Resource):
             
         
 class RoomsId(Resource):
-    def get(self, id, code):
+    def get(self, id):
         room = Room.query.filter(Room.id == id).first()
         if room:
             if room.code == code:
@@ -224,6 +227,17 @@ class RoomsId(Resource):
                 return {'message': 'room code does not match'}, 400
         else:
             return {'message': 'room does not exist'}, 400
+    
+    def delete(self, id):
+        try:
+            room = Room.query.filter(Room.id == id).first()
+            if room:
+                db.session.delete(room)
+                db.session.commit()
+                return {'message': 'room deleted'}, 200
+        except:
+            return {'message': 'room does not exist'}, 400
+
 
 class JoinsId(Resource):
     def delete(self, id):
@@ -248,7 +262,7 @@ api.add_resource(JoinRoom, '/api/rooms/join', endpoint='rooms_join')
 api.add_resource(GuestJoinRoom, '/api/rooms/guest_join', endpoint='rooms_guest_join')
 api.add_resource(LeaveRoom, '/api/rooms/leave', endpoint='rooms_leave')
 api.add_resource(GuestsId, '/api/guests/<int:id>', endpoint='guests_id')
-api.add_resource(RoomsId, '/api/rooms/<int:id>/<string:code>', endpoint='rooms_id')
+api.add_resource(RoomsId, '/api/rooms/<int:id>', endpoint='rooms_id')
 api.add_resource(UserId, '/api/users/<int:id>', endpoint='users_id')
 api.add_resource(JoinsId, '/api/joins/<int:id>', endpoint='joins_id')
 

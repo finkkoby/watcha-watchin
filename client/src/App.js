@@ -50,7 +50,6 @@ function App() {
          r.json().then(user => setUser(user))
        } else {
          r.json().then(res => {
-           console.log(res)
            setUser(null)
          })
        }
@@ -64,7 +63,6 @@ function App() {
           r.json().then(room => setRoom(room))
         } else {
           r.json().then(res => {
-            console.log(res)
             setRoom(null)
           })
         }

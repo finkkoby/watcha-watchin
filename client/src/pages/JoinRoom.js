@@ -37,6 +37,7 @@ function JoinRoom() {
                     }).then(r => {
                         if (r.ok) {
                             r.json().then(res => {
+                                console.log(res)
                                 setRoom(res.room)
                                 setJoin(res)
                                 navigate(`/user/room/${res.id}`)
@@ -51,13 +52,13 @@ function JoinRoom() {
             >
                 {props => (
                     <Form>
-                        <label htmlFor="room-code">
+                        <label htmlFor="roomCode">
                             room code
                             <Field name="roomCode" placeholder="required" />
                         </label>
                         <ErrorMessage name="roomCode" component="p" />
 
-                        { error ? <p>{error}</p> : null}
+                        { (error && !props.errors.roomCode) ? <p>{error}</p> : null}
 
                         <button type='submit'>- join room -</button>
                     </Form>

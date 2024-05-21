@@ -12,9 +12,70 @@ function ViewingRoom() {
 
     const { user, room, setRoom, join, setJoin, navigate } = useContext(AppContext)
 
+    function handleLeave(socket) {
+        socket.emit('leave', room.name)
+        fetch('/api/rooms/leave')
+        .then(r => {
+            if (r.ok) {
+                r.json().then(res => {
+                    console.log('left socket room')
+                })
+            } else {
+                r.json().then(res => {
+                    console.log(res.message)
+                })
+            }
+        })
+    }
+
+    function handleDeleteJoin() {
+        fetch(`/api/joins/${join.id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+        }})
+       .then(r => {
+            if (r.ok) {
+                r.json().then(res => {
+                    console.log(join)
+                    console.log(user)
+                    if (join.host) {
+                        handleDeleteRoom()
+                    } else {
+                        setRoom(null)
+                        setJoin(null)
+                    }
+                })
+            } else {
+                r.json().then(res => {
+                    console.log(res.message)
+                })
+            }
+       })
+    }
+
+    function handleDeleteRoom() {
+        fetch(`/api/rooms/${room.id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+        }})
+       .then(r => {
+        if (r.ok) {
+            r.json().then(res => {
+                setRoom(null)
+                setJoin(null)
+            })
+        } else {
+            r.json().then(res => {
+                console.log(res.message)
+            })
+        }
+       })
+    }
+
     useEffect(() => {
         if (room) {
-
             const s = io('/join')
 
             s.on('connect', () => {
@@ -35,36 +96,8 @@ function ViewingRoom() {
             })
 
             return (() => {
-                s.emit('leave', room.name)
-                fetch('/api/rooms/leave')
-                .then(r => {
-                    if (r.ok) {
-                        r.json().then(res => {
-                            setRoom(null)
-                            fetch(`/api/joins/${join.id}`, {
-                                method: 'DELETE',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                }})
-                            .then(r => {
-                                if (r.ok) {
-                                    r.json().then(res => {
-                                        setJoin(null)
-                                    })
-                                } else {
-                                    r.json().then(res => {
-                                        console.log(res.message)
-                                    })
-                                }
-                            })
-                        })
-                    } else {
-                        r.json().then(res => {
-                            console.log(res)
-                            setError(true)
-                        })
-                    }
-                })
+                handleLeave(s)
+                handleDeleteJoin()
             })
         }
     }, [])
