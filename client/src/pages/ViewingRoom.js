@@ -65,16 +65,8 @@ function ViewingRoom() {
        .then(r => {
         if (r.ok) {
             r.json().then(res => {
-                const newJoins = user.joins.map(j => {
-                    if (j.room.id !== room.id) {
-                        return j
-                    }
-                })
-                const newRooms = user.rooms.map(r => {
-                    if (r.id !== room.id) {
-                        return r
-                    }
-                })
+                const newJoins = user.joins.filter(j => j.room.id !== room.id)
+                const newRooms = user.rooms.filter(r => r.id !== room.id)
                 setUser({...user, joins : newJoins, rooms : newRooms})
                 setRoom(null)
                 setJoin(null)

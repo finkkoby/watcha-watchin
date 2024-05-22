@@ -8,7 +8,7 @@ import AppContext from '../context/AppContext'
 function JoinRoom() {
     const [error, setError] = useState(false)
 
-    const { user, room, setRoom, navigate, setJoin } = useContext(AppContext)
+    const { user, setUser, room, setRoom, navigate, setJoin } = useContext(AppContext)
 
     useEffect(() => {
         return () => setError(false)

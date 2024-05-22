@@ -1,13 +1,22 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 
 import AppContext from "../context/AppContext";
 
 function UserDashboard() {
     const { user, room, navigate, setRoom, setJoin } = useContext(AppContext);
 
-    while (!user) {
+    if (!user) {
         return <h1>loading...</h1>
     }
+
+
+    const myRooms = user.rooms.map(room => {
+        return (
+            <div key={room.id}>
+                <button onClick={() => handleEnterRoom(room)}>{room.name}</button>
+            </div>
+        )
+    })
 
     function handleEnterRoom(room) {
         console.log(room)
@@ -33,14 +42,6 @@ function UserDashboard() {
             }
         })
     }
-
-    const myRooms = user.joins.map(join => {
-        return (
-            <div key={join.id}>
-                <button onClick={() => handleEnterRoom(join.room)}>{join.room.name}</button>
-            </div>
-        )
-    })
 
     return (
         <div className='dash-container'>
