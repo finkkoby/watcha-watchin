@@ -10,6 +10,7 @@ import URLForm from '../components/URLForm'
 
 function ViewingRoom() {
     const [error, setError] = useState(false)
+    const [socket, setSocket] = useState(false)
 
     const { user, setUser, room, setRoom, join, setJoin, navigate } = useContext(AppContext)
 
@@ -18,6 +19,8 @@ function ViewingRoom() {
     useEffect(() => {
         if (room) {
             const s = io('/join')
+
+            setSocket(s)
 
             s.on('connect', () => {
                 console.log('connected to join namespace')
@@ -30,6 +33,10 @@ function ViewingRoom() {
 
             s.on('left', data => {
                 console.log(`left ${room.name}`)
+            })
+
+            s.on('new_video', data => {
+                setRoom({...room, video: data})
             })
 
             s.on('disconnect', () => {
@@ -138,7 +145,7 @@ function ViewingRoom() {
                     { room.video ? (
                         <YouTube videoId={room.video.youtube_id}></YouTube>
                     ) : join.host && !room.video ? (
-                        <URLForm />
+                        <URLForm socket={socket}/>
                     ) : (
                         <h1>waiting for host...</h1>
                     )}

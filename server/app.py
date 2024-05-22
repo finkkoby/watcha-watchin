@@ -29,6 +29,11 @@ def leave(sid, data):
     print(sid, ' left ', data, '')
     sio.disconnect(sid, namespace='/join')
 
+@sio.on('video_update', namespace='/join')
+def video_update(sid, data):
+    sio.emit('new_video', data['video'], room=data['name'], namespace='/join')
+    print(sid, ' new_video ', data)
+
 
 class Index(Resource):
     def get(self):

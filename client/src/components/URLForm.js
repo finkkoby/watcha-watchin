@@ -6,9 +6,8 @@ import getVideoId from 'get-video-id'
 
 import AppContext from '../context/AppContext'
 
-function URLForm() {
+function URLForm({ socket }) {
     const [error, setError] = useState(false)
-    const [video, setVideo] = useState(null)
 
     const { room, setRoom } = useContext(AppContext)
 
@@ -63,6 +62,7 @@ function URLForm() {
             if (r.ok) {
                 r.json().then(res => {
                     setRoom(res)
+                    socket.emit('video_update', {name: room.name, video: video})
                 })
             } else {
                 r.json().then(res => {
