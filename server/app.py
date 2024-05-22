@@ -10,7 +10,7 @@ import random
 from config import app, db, api, sio
 
 # Add your model imports
-from models import User, Room, Guest, Join
+from models import User, Room, Guest, Join, Video, Recent
 
 @sio.event
 def connect(sid, environ, auth):
@@ -120,7 +120,9 @@ class UserId(Resource):
         else:
             return {'message': 'user not found'}, 400
 
-class NewRoom(Resource):
+class Rooms(Resource):
+    def get(self):
+        return [room.to_dict() for room in Room.query.all()], 200
     def post(self):
         json = request.get_json()
         code = ''.join(random.choices(string.ascii_uppercase +
@@ -235,6 +237,19 @@ class RoomsId(Resource):
             return room.to_dict(), 200
         else:
             return {'message': 'room does not exist'}, 400
+        
+    def patch(self, id):
+        json = request.get_json()
+        try:
+            room = Room.query.filter(Room.id == id).first()
+            if room:
+                new_video = Video.query.filter(Video.id == json['videoId']).first()
+                room.name = json['name']
+                room.video = new_video
+                db.session.commit()
+                return room.to_dict(), 200
+        except:
+            return {'message': 'room does not exist'}, 400
     
     def delete(self, id):
         try:
@@ -258,6 +273,30 @@ class JoinsId(Resource):
         except:
             return {'message': 'join does not exist'}, 400
 
+class Videos(Resource):
+    def get(self):
+        return [video.to_dict() for video in Video.query.all()], 200
+
+    def post(self):
+        json = request.get_json()
+        try:
+            video = Video.query.filter(Video.youtube_id == json['youtube_id']).first()
+            if video:
+                return video.to_dict(), 200
+        except:
+            try:
+                video = Video(
+                    youtube_id=json['youtube_id']
+                )
+                if video:
+                    db.session.add(video)
+                    db.session.commit()
+                    return video.to_dict(), 200
+                else:
+                    return {'message': 'could not create video -- try again'}, 400
+            except:
+                return {'message': 'could not create video -- try again'}, 400
+
     
 api.add_resource(Index, '/', endpoint='index')
 api.add_resource(CheckSession, '/api/check_session', endpoint='check_session')
@@ -265,7 +304,7 @@ api.add_resource(CheckRoom, '/api/check_room', endpoint='check_room')
 api.add_resource(Login, '/api/login', endpoint='login')
 api.add_resource(Logout, '/api/logout', endpoint='logout')
 api.add_resource(Signup, '/api/signup', endpoint='signup')
-api.add_resource(NewRoom, '/api/rooms/new', endpoint='rooms_new')
+api.add_resource(Rooms, '/api/rooms', endpoint='rooms')
 api.add_resource(JoinRoom, '/api/rooms/join', endpoint='rooms_join')
 api.add_resource(GuestJoinRoom, '/api/rooms/guest_join', endpoint='rooms_guest_join')
 api.add_resource(LeaveRoom, '/api/rooms/leave', endpoint='rooms_leave')
@@ -273,6 +312,7 @@ api.add_resource(GuestsId, '/api/guests/<int:id>', endpoint='guests_id')
 api.add_resource(RoomsId, '/api/rooms/<int:id>', endpoint='rooms_id')
 api.add_resource(UserId, '/api/users/<int:id>', endpoint='users_id')
 api.add_resource(JoinsId, '/api/joins/<int:id>', endpoint='joins_id')
+api.add_resource(Videos, '/api/videos', endpoint='videos')
 
 
 if __name__ == '__main__':

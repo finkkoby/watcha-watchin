@@ -85,7 +85,7 @@ class Room(db.Model, SerializerMixin):
 
 
     # Serialize Rules
-    serialize_rules = ("-video.room", "-guests.room", "-joins.room")
+    serialize_rules = ("-video.rooms", "-guests.room", "-joins.room")
 
     # Validations
 

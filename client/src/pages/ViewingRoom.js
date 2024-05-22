@@ -13,6 +13,39 @@ function ViewingRoom() {
 
     const { user, setUser, room, setRoom, join, setJoin, navigate } = useContext(AppContext)
 
+    console.log(join)
+
+    useEffect(() => {
+        if (room) {
+            const s = io('/join')
+
+            s.on('connect', () => {
+                console.log('connected to join namespace')
+                s.emit('join', room.name)
+            })
+
+            s.on('joined', (data) => {
+                console.log(data)
+            })
+
+            s.on('left', data => {
+                console.log(`left ${room.name}`)
+            })
+
+            s.on('disconnect', () => {
+                console.log('disconnected from join namespace')
+            })
+
+            return (() => {
+                handleLeave(s)
+            })
+        }
+    }, [])
+
+    if (!user || !room || !join) {
+        return <h1>loading...</h1>
+    }
+
     function handleLeave(socket) {
         socket.emit('leave', room.name)
         fetch('/api/rooms/leave')
@@ -80,37 +113,6 @@ function ViewingRoom() {
        })
     }
 
-    useEffect(() => {
-        if (room) {
-            const s = io('/join')
-
-            s.on('connect', () => {
-                console.log('connected to join namespace')
-                s.emit('join', room.name)
-            })
-
-            s.on('joined', (data) => {
-                console.log(data)
-            })
-
-            s.on('left', data => {
-                console.log(`left ${room.name}`)
-            })
-
-            s.on('disconnect', () => {
-                console.log('disconnected from join namespace')
-            })
-
-            return (() => {
-                handleLeave(s)
-            })
-        }
-    }, [])
-
-    while (!room) {
-        return <ViewingRoomLoading />
-    }
-
     
     return (
         <>
@@ -134,7 +136,7 @@ function ViewingRoom() {
                 </div>
                 <div id='vr-column-2' className='vr-column'>
                     { room.video ? (
-                        <YouTube videoId={room.youtube_id}></YouTube>
+                        <YouTube videoId={room.video.youtube_id}></YouTube>
                     ) : join.host && !room.video ? (
                         <URLForm />
                     ) : (

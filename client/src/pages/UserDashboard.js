@@ -3,7 +3,7 @@ import { useContext, useState, useEffect } from "react";
 import AppContext from "../context/AppContext";
 
 function UserDashboard() {
-    const { user, room, navigate, setRoom, setJoin } = useContext(AppContext);
+    const { user, join, navigate, setRoom, setJoin } = useContext(AppContext);
 
     if (!user) {
         return <h1>loading...</h1>
@@ -47,7 +47,7 @@ function UserDashboard() {
         <div className='dash-container'>
             <div id='column1' className='dash-column'>
                 <div className='dash-box' id='button-bar'>
-                    { room ? <button id='rejoin' onClick={() => navigate(`/user/room/${room.id}`)}>rejoin {room.name}</button> :
+                    { join ? <button id='rejoin' onClick={() => navigate(`/user/room/${join.room.id}`)}>rejoin {join.room.name}</button> :
                     <>
                         <button id='create-room' onClick={() => navigate('/user/room/new')}>create room</button>
                         <button id='join-room' onClick={() => navigate('/user/room/join')}>join room</button>

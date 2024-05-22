@@ -28,7 +28,7 @@ function NewRoom() {
                 }}
                 validationSchema={formSchema}
                 onSubmit={values => {
-                    fetch('/api/rooms/new', {
+                    fetch('/api/rooms', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
