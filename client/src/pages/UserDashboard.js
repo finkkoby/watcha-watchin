@@ -10,10 +10,10 @@ function UserDashboard() {
     }
 
 
-    const myRooms = user.rooms.map(room => {
+    const myRooms = user.joins.map(j => {
         return (
-            <div key={room.id}>
-                <button onClick={() => handleEnterRoom(room)}>{room.name}</button>
+            <div key={j.room.id}>
+                <button onClick={() => handleEnterRoom(j.room)}>{j.room.name}</button>
             </div>
         )
     })

@@ -18,15 +18,15 @@ def connect(sid, environ, auth):
 
 @sio.on('join', namespace='/join')
 def join(sid, data):
-    sio.enter_room(sid, room=data, namespace='/join')
-    sio.emit('joined', data, room=data, namespace='/join')
-    print(sid, ' joined ', data)
+    sio.enter_room(sid, room=data['room'], namespace='/join')
+    sio.emit('joined', data['join'], room=data['room'], namespace='/join')
+    print(sid, ' joined ', data['room'])
 
 @sio.on('leave', namespace='/join')
 def leave(sid, data):
-    sio.leave_room(sid, room=data, namespace='/join')
-    sio.emit('left', data, room=data, namespace='/join')
-    print(sid, ' left ', data, '')
+    sio.leave_room(sid, room=data['room'], namespace='/join')
+    sio.emit('left', data, room=data['room'], namespace='/join')
+    print(sid, ' left ', data['room'], '')
     sio.disconnect(sid, namespace='/join')
 
 @sio.on('video_update', namespace='/join')
@@ -170,7 +170,9 @@ class JoinRoom(Resource):
                             db.session.add(join)
                             db.session.commit()
                             session['room_id'] = room.id
-                            return join.to_dict(), 200
+                            return {"room": room.to_dict(), "join": join.to_dict()}, 200
+                        else:
+                            return {'message': 'could not create join -- try again'}, 400
                     else:
                         return {'message': 'invalid room code'}, 400
                 except:

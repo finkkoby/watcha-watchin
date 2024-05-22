@@ -9,30 +9,34 @@ import ViewingRoomLoading from '../components/ViewingRoomLoading'
 import URLForm from '../components/URLForm'
 
 function ViewingRoom() {
-    const [error, setError] = useState(false)
-    const [socket, setSocket] = useState(false)
-
     const { user, setUser, room, setRoom, join, setJoin, navigate } = useContext(AppContext)
 
-    console.log(join)
+    const [error, setError] = useState(false)
+    const [socket, setSocket] = useState(false)
+    const [roomJoins, setRoomJoins] = useState([])
 
     useEffect(() => {
         if (room) {
+            // STATE IS CAPTURED WHEN USEEFFECT IS RENDERED
             const s = io('/join')
 
             setSocket(s)
 
             s.on('connect', () => {
                 console.log('connected to join namespace')
-                s.emit('join', room.name)
+                s.emit('join', {room: room.name, join: join})
             })
 
             s.on('joined', (data) => {
-                console.log(data)
+                if (data.id !== join.id) {
+                    handleAddJoin(data)
+                }
             })
 
             s.on('left', data => {
-                console.log(`left ${room.name}`)
+                if (data.join.id !== join.id) {
+                    handleRemoveJoin(data.join)
+                }
             })
 
             s.on('new_video', data => {
@@ -42,9 +46,19 @@ function ViewingRoom() {
             s.on('disconnect', () => {
                 console.log('disconnected from join namespace')
             })
+            
+            if (room.joins) {
+                setRoomJoins(room.joins)
+                console.log("Hello")
+            } else {
+                setRoomJoins([])
+            }
 
             return (() => {
                 handleLeave(s)
+                if (!join.host) {
+                    handleDeleteJoin()
+                }
             })
         }
     }, [])
@@ -53,8 +67,16 @@ function ViewingRoom() {
         return <h1>loading...</h1>
     }
 
+    function handleAddJoin(join) {
+        setRoomJoins([...room.joins, join])
+    }
+
+    function handleRemoveJoin(join) {
+        setRoomJoins(room.joins.filter(j => j.id !== join.id))
+    }
+
     function handleLeave(socket) {
-        socket.emit('leave', room.name)
+        socket.emit('leave', {room: room.name, join: join})
         fetch('/api/rooms/leave')
         .then(r => {
             if (r.ok) {
@@ -78,11 +100,7 @@ function ViewingRoom() {
        .then(r => {
             if (r.ok) {
                 r.json().then(res => {
-                    const newJoins = user.joins.map(j => {
-                        if (j.id !== join.id) {
-                            return j
-                        }
-                    })
+                    const newJoins = user.joins.filter(j => j.id !== join.id)
                     setUser({...user, joins : newJoins})
                     setRoom(null)
                     setJoin(null)
@@ -120,6 +138,12 @@ function ViewingRoom() {
        })
     }
 
+    const userCards = roomJoins.map(j => {
+        return (
+            <p key={j.user.id}>{j.user.username}{ j.host ? " HOST" : null}</p>
+        )
+    })
+
     
     return (
         <>
@@ -130,12 +154,7 @@ function ViewingRoom() {
                         <h1 id='room-code'>{room.code}</h1>
                     </div>
                     <div id='vr-users-container'>
-                        <ul id='vr-user-list'>
-                            <li>user1</li>
-                            <li>user2</li>
-                            <li>user3</li>
-                            <li>user4</li>
-                        </ul>
+                        { userCards }
                     </div>
                     { join.host ? 
                     <button id='delete-room' onClick={() => handleDeleteRoom()}>delete room</button> 
