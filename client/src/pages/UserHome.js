@@ -9,8 +9,6 @@ function UserHome() {
     const { navigate, user } = useContext(AppContext)
 
     const { pathname } = useLocation()
-    
-    console.log(process.env.REACT_APP_API_KEY)
 
     useEffect(() => {
         if (!user) {

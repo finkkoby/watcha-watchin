@@ -14,7 +14,7 @@ function ViewingRoom() {
     const [error, setError] = useState(false)
     const [socket, setSocket] = useState(false)
     const [roomJoins, setRoomJoins] = useState([])
-
+    
     useEffect(() => {
         if (room) {
             // STATE IS CAPTURED WHEN USEEFFECT IS RENDERED
@@ -166,6 +166,37 @@ function ViewingRoom() {
             }
         })
     }
+    function handleHostUpdate(event) {
+        // console.log(event)
+        // console.log(event.target.playerInfo)
+        // console.log(YouTube.PlayerState)
+        socket.emit('hostupdate', {name: room.name, event: event.target.playerInfo})
+    }
+
+    function handleUpdateFromHost(newTarget, player) {
+        console.log("I'm being called")
+        console.log(player)
+        if (player) {
+            player.seekTo(newTarget['currentTime'])
+            if (newTarget.playerState === 1) {
+                player.playVideo()
+            } else if (newTarget.playerState === 2) {
+                player.pauseVideo()
+            } else if (newTarget.playerState === 3) {
+                player.pauseVideo()
+            }
+        }
+    }
+
+    function handleReady(event) {
+        const player = event.target
+        socket.on('statechange', data => {
+            if (!join.host && data) {
+                console.log(data)
+                handleUpdateFromHost(data, player)
+            }
+        })
+    }
 
     function handleNewVideo() {
         setRoom({...room, video: null})
@@ -199,7 +230,7 @@ function ViewingRoom() {
                 </div>
                 <div id='vr-column-2' className='vr-column'>
                     { room.video ? (
-                        <YouTube videoId={room.video.youtube_id}></YouTube>
+                        <YouTube videoId={room.video.youtube_id} onReady={handleReady} onStateChange={join.host ? handleHostUpdate : null}></YouTube>
                     ) : join.host && !room.video ? (
                         <URLForm socket={socket}/>
                     ) : (
