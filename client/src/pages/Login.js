@@ -52,7 +52,7 @@ function Login() {
                             })
                         } else {
                             r.json().then(res => {
-                                setError(res)
+                                setError(res.message)
                             })
                         }
                     })
@@ -72,7 +72,7 @@ function Login() {
                         </label>
                         <ErrorMessage name="password" component="p" />
 
-                        {error ? <p>invalid username or password</p> : null}
+                        {error ? <p>{error}</p> : null}
 
                         <button type='submit'>- login -</button>
                     </Form>

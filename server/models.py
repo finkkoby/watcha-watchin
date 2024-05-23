@@ -32,7 +32,7 @@ class User(db.Model, SerializerMixin):
                              creator=lambda room_obj: Join(room=room_obj))
 
     # Serialize Rules
-    serialize_rules = ("-recents.user", "-join.user", "videos", "rooms", "-rooms.joins", "-rooms.users")
+    serialize_rules = ("-recents.user", "-join.user", "rooms", "-rooms.joins", "-rooms.users")
 
     # Validations
     @hybrid_property
@@ -124,7 +124,7 @@ class Recent(db.Model, SerializerMixin):
     video = db.relationship("Video", back_populates='recents')
 
     # Serialize Rules
-    serialize_rules = ("-user.recents", "-video.recents")
+    serialize_only = ("video.id", "video.title", "video.image_url", "video.url", "video.youtube_id")
 
 
     # Validations
@@ -138,6 +138,9 @@ class Video(db.Model, SerializerMixin):
 
     # Database Schema
     id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String)
+    image_url = db.Column(db.String)
+    url = db.Column(db.String)
     youtube_id = db.Column(db.String, nullable=False)
 
     # Relationships
@@ -149,7 +152,7 @@ class Video(db.Model, SerializerMixin):
 
 
     # Serialize Rules
-    serialize_rules = ('-recents.video',)
+    serialize_rules = ('-recents.video', '-recents.user')
 
     # Validations
 

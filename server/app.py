@@ -65,13 +65,24 @@ class Login(Resource):
         json = request.get_json()
         try:
             user = User.query.filter(User.username == json['username']).first()
+        except:
+            return {'message': 'could not find user'}, 400
+        try:
+            user.authenticate(json['password'])
+        except:
+            return {'message': 'invalid password'}, 400
+        try:
             if user and user.authenticate(json['password']):
                 session['user_id'] = user.id
-                return user.to_dict(), 200
-            else:
-                return {'message': 'invalid username or password'}, 400
         except:
-            return {'message': 'Login failed'}, 400
+            return {'message': 'could not set session'}, 400
+        try:
+            if user and user.authenticate(json['password']):
+                return user.to_dict(), 200
+        except:
+            return {'message': 'failed to return user'}, 400
+        # except:
+        #     return {'message': 'Login failed'}, 400
 
 class Logout(Resource):
     def get(self):
@@ -286,23 +297,41 @@ class Videos(Resource):
 
     def post(self):
         json = request.get_json()
+        video = Video.query.filter(Video.youtube_id == json['youtube_id']).first()
+        if video:
+            return video.to_dict(), 200
         try:
-            video = Video.query.filter(Video.youtube_id == json['youtube_id']).first()
+            video = Video(
+                title=json['title'],
+                image_url=json['image_url'],
+                url=json['url'],
+                youtube_id=json['youtube_id']
+            )
             if video:
+                db.session.add(video)
+                db.session.commit()
                 return video.to_dict(), 200
-        except:
-            try:
-                video = Video(
-                    youtube_id=json['youtube_id']
-                )
-                if video:
-                    db.session.add(video)
-                    db.session.commit()
-                    return video.to_dict(), 200
-                else:
-                    return {'message': 'could not create video -- try again'}, 400
-            except:
+            else:
                 return {'message': 'could not create video -- try again'}, 400
+        except:
+            return {'message': 'could not create video -- try again'}, 400
+
+class Recents(Resource):
+    def post(self):
+        json = request.get_json()
+        try:
+            recent = Recent(
+                user=User.query.filter(User.id == json['user']).first(),
+                video=Video.query.filter(Video.id == json['video']).first()
+            )
+            if recent:
+                db.session.add(recent)
+                db.session.commit()
+                return recent.to_dict(), 200
+            else:
+                return {'message': 'could not create recent'}, 400
+        except:
+            return {'message': 'could not create recent -- try again'}, 400
 
     
 api.add_resource(Index, '/', endpoint='index')
@@ -320,6 +349,7 @@ api.add_resource(RoomsId, '/api/rooms/<int:id>', endpoint='rooms_id')
 api.add_resource(UserId, '/api/users/<int:id>', endpoint='users_id')
 api.add_resource(JoinsId, '/api/joins/<int:id>', endpoint='joins_id')
 api.add_resource(Videos, '/api/videos', endpoint='videos')
+api.add_resource(Recents, '/api/recents', endpoint='recents')
 
 
 if __name__ == '__main__':

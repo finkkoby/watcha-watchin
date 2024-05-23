@@ -1,5 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+
 import AppContext from "../context/AppContext";
 
 function UserDashboard() {
@@ -9,7 +11,7 @@ function UserDashboard() {
         return <h1>loading...</h1>
     }
 
-
+    console.log(user)
     const myRooms = user.joins.map(j => {
         return (
             <div key={j.room.id}>
@@ -17,6 +19,20 @@ function UserDashboard() {
             </div>
         )
     })
+
+    const myRecents = user.recents.map(r => {
+        return (
+            <div key={r.id}>
+                <img src={r.video.image_url} />
+                <p>{r.video.title}</p>
+                <CopyToClipboard text={r.video.url}>
+                    <button>copy link</button>
+                </CopyToClipboard>
+            </div>
+        )
+    })
+
+    myRecents.reverse()
 
     function handleEnterRoom(room) {
         console.log(room)
@@ -62,20 +78,12 @@ function UserDashboard() {
                 </div>
             </div>
             <div id='column2' className='dash-column'>
-                <div className='dash-box' id='friends-list'>
-                    <h3>friends</h3>
-                    <div id='friends-list-list'>
-                        <p>friend 1</p>
-                        <p>friend 2</p>
-                        <p>friend 3</p>
-                    </div>
-                </div>
                 <div className='dash-box' id='recent-videos'>
                     <h3>recent videos</h3>
                     <div id='recent-videos-list'>
-                        <p>video 1</p>
-                        <p>video 2</p>
-                        <p>video 3</p>
+                        { myRecents[0] }
+                        { myRecents[1] }
+                        { myRecents[2] }
                     </div>
                 </div>
             </div>

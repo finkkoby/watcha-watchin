@@ -15,7 +15,6 @@ function UserHome() {
             navigate('/login')
         }
     }, [])
-    
 
     useEffect(() => {
         fetch('/api/check_session')

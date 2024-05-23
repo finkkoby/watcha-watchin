@@ -28,9 +28,7 @@ function ViewingRoom() {
             })
 
             s.on('joined', (data) => {
-                if (data.id !== join.id) {
-                    handleAddJoin(data)
-                }
+                handleAddJoin(data)
             })
 
             s.on('left', data => {
@@ -41,6 +39,9 @@ function ViewingRoom() {
 
             s.on('new_video', data => {
                 setRoom({...room, video: data})
+                if (data) {
+                    handleNewRecent(data)
+                }
             })
 
             s.on('disconnect', () => {
@@ -67,8 +68,12 @@ function ViewingRoom() {
         return <h1>loading...</h1>
     }
 
-    function handleAddJoin(join) {
-        setRoomJoins([...room.joins, join])
+    function handleAddJoin(data) {
+        if (data.id !== join.id) {
+            setRoomJoins([...room.joins, join])
+        } else if (roomJoins.length === 0) {
+            setRoomJoins([join])
+        }
     }
 
     function handleRemoveJoin(join) {
@@ -138,6 +143,35 @@ function ViewingRoom() {
        })
     }
 
+    function handleNewRecent(video) {
+        fetch('/api/recents', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user: user.id,
+                video: video.id
+            })
+        }).then(r => {
+            if (r.ok) {
+                r.json().then(res => {
+                    user.recents.push(res)
+                    setUser({...user})
+                })
+            } else {
+                r.json().then(res => {
+                    console.log(res.message)
+                })
+            }
+        })
+    }
+
+    function handleNewVideo() {
+        setRoom({...room, video: null})
+        socket.emit("video_update", { name: room.name, video: null })
+    }
+
     const userCards = roomJoins.map(j => {
         return (
             <p key={j.user.id}>{j.user.username}{ j.host ? " HOST" : null}</p>
@@ -156,9 +190,12 @@ function ViewingRoom() {
                     <div id='vr-users-container'>
                         { userCards }
                     </div>
-                    { join.host ? 
-                    <button id='delete-room' onClick={() => handleDeleteRoom()}>delete room</button> 
-                    : <button id='leave-room' onClick={() => handleDeleteJoin()}>leave room</button> }
+                    { join.host ? (
+                        <>
+                            <button id='delete-room' onClick={() => handleDeleteRoom()}>delete room</button> 
+                            <button id='new-video' onClick={() => handleNewVideo()}>new video</button>
+                        </>
+                    ) : <button id='leave-room' onClick={() => handleDeleteJoin()}>leave room</button> }
                 </div>
                 <div id='vr-column-2' className='vr-column'>
                     { room.video ? (

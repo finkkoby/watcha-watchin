@@ -26,18 +26,37 @@ function URLForm({ socket }) {
         return id
     }
 
-    function handleNewVideo(youtubeId) {
+    function handleVideoInfo(id, url) {
+        fetch(`https://www.googleapis.com/youtube/v3/videos?id=${id}&key=AIzaSyAM756mv-2hLkVGeemHfNbPL9i62Kcw3X8%20&part=snippet`)
+        .then(r => {
+            if (r.ok) {
+                r.json().then(res => {
+                    handleNewVideo(res.items[0].snippet.title, res.items[0].snippet.thumbnails.default.url, url, id)
+                })
+            } else {
+                r.json().then(res => {
+                    setError(res.message)
+                })
+            }
+        })
+    }
+
+    function handleNewVideo(title, thumbnail_url, url, youtubeId) {
         fetch('/api/videos', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                title: title,
+                image_url: thumbnail_url,
+                url: url,
                 youtube_id: youtubeId
             })
         }).then(r => {
             if (r.ok) {
                 r.json().then(res => {
+                    console.log(res)
                     handleRoomUpdate(res)
                 })
             } else {
@@ -82,7 +101,7 @@ function URLForm({ socket }) {
                 onSubmit={values => {
                     const youtubeId = handleVideoURL(values.url)
                     if (youtubeId) {
-                        handleNewVideo(youtubeId)
+                        handleVideoInfo(youtubeId, values.url)
                     } else {
                         setError('please enter a valid youtube URL')
                         return
