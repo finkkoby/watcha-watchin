@@ -6,6 +6,7 @@ import getVideoId from 'get-video-id'
 
 import AppContext from '../context/AppContext'
 
+
 function URLForm({ socket }) {
     const [error, setError] = useState(false)
 
@@ -27,7 +28,7 @@ function URLForm({ socket }) {
     }
 
     function handleVideoInfo(id, url) {
-        fetch(`https://www.googleapis.com/youtube/v3/videos?id=${id}&key=AIzaSyAM756mv-2hLkVGeemHfNbPL9i62Kcw3X8%20&part=snippet`)
+        fetch(`https://www.googleapis.com/youtube/v3/videos?id=${id}&key=${process.env.REACT_APP_API_KEY}%20&part=snippet`)
         .then(r => {
             if (r.ok) {
                 r.json().then(res => {
