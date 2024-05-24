@@ -7,9 +7,11 @@ import AppContext from '../context/AppContext'
 import '../css/ViewingRoom.css'
 import ViewingRoomLoading from '../components/ViewingRoomLoading'
 import URLForm from '../components/URLForm'
+import Chat from '../components/Chat'
 
 function ViewingRoom() {
     const { user, setUser, room, setRoom, join, setJoin, navigate } = useContext(AppContext)
+
 
     const [error, setError] = useState(false)
     const [socket, setSocket] = useState(false)
@@ -62,7 +64,7 @@ function ViewingRoom() {
     }, [])
 
     if (!user || !room || !join) {
-        return <h1>loading...</h1>
+        return <ViewingRoomLoading />
     }
 
     function handleSelfJoin(data) {
@@ -218,9 +220,7 @@ function ViewingRoom() {
                     )}
                 </div>
                 <div id='vr-column-2' className='vr-box'>
-                    <div id='chat-container'>
-                        <h1>chat</h1>
-                    </div>
+                    <Chat socket={socket}/>
                 </div>
             </div>
             <div id='vr-room-info'>

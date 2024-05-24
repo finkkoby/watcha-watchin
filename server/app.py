@@ -38,6 +38,10 @@ def video_update(sid, data):
 def hostupdate(sid, data):
     sio.emit('statechange', data['event'], room=data['name'], namespace='/join')
 
+@sio.on('sendmessage', namespace='/join')
+def sendmessage(sid, data):
+    sio.emit('newmessage', data, room=data['name'], namespace='/join')
+
 
 class Index(Resource):
     def get(self):
