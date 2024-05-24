@@ -47,13 +47,6 @@ function ViewingRoom() {
             s.on('disconnect', () => {
                 console.log('disconnected from join namespace')
             })
-            
-            if (room.joins) {
-                setRoomJoins(room.joins)
-                console.log("Hello")
-            } else {
-                setRoomJoins([])
-            }
 
             return (() => {
                 handleLeave(s)
@@ -70,9 +63,9 @@ function ViewingRoom() {
 
     function handleAddJoin(data) {
         if (data.id !== join.id) {
-            setRoomJoins([...room.joins, join])
-        } else if (roomJoins.length === 0) {
-            setRoomJoins([join])
+            setRoomJoins([...room.joins, data])
+        } else {
+            setRoomJoins([...room.joins])
         }
     }
 
@@ -167,9 +160,6 @@ function ViewingRoom() {
         })
     }
     function handleHostUpdate(event) {
-        // console.log(event)
-        // console.log(event.target.playerInfo)
-        // console.log(YouTube.PlayerState)
         socket.emit('hostupdate', {name: room.name, event: event.target.playerInfo})
     }
 
