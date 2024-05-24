@@ -14,15 +14,15 @@ function UserDashboard() {
     console.log(user)
     const myRooms = user.joins.map(j => {
         return (
-            <div key={j.room.id}>
-                <button onClick={() => handleEnterRoom(j.room)}>{j.room.name}</button>
+            <div key={j.room.id} className='room-box'>
+                <button className='room-button' onClick={() => handleEnterRoom(j.room)}>{j.room.name}</button>
             </div>
         )
     })
 
     const myRecents = user.recents.map(r => {
         return (
-            <div key={r.id}>
+            <div key={r.id} className='recent-box'>
                 <img src={r.video.image_url} />
                 <p>{r.video.title}</p>
                 <CopyToClipboard text={r.video.url}>

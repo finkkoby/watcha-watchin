@@ -48,7 +48,9 @@ function Chat({ socket }) {
 
     return (
         <div id='chat-container'>
-            <h1>chat</h1>
+            <div id='chat-header'>
+                <h2>chat</h2>
+            </div>
             <div id='message-box'>
                 { messageCards }
             </div>
