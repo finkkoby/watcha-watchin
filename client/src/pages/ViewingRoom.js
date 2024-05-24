@@ -28,7 +28,11 @@ function ViewingRoom() {
             })
 
             s.on('joined', (data) => {
-                handleAddJoin(data)
+                if (data.id === join.id) {
+                    handleSelfJoin(data)
+                } else {
+                    handleAddJoin(data)
+                }
             })
 
             s.on('left', data => {
@@ -61,12 +65,12 @@ function ViewingRoom() {
         return <h1>loading...</h1>
     }
 
+    function handleSelfJoin(data) {
+        setRoomJoins([...room.joins], data)
+    }
+
     function handleAddJoin(data) {
-        if (data.id !== join.id) {
-            setRoomJoins([...room.joins, data])
-        } else {
-            setRoomJoins([...room.joins])
-        }
+        setRoomJoins([...room.joins])
     }
 
     function handleRemoveJoin(join) {
@@ -195,30 +199,16 @@ function ViewingRoom() {
 
     const userCards = roomJoins.map(j => {
         return (
-            <p key={j.user.id}>{j.user.username}{ j.host ? " HOST" : null}</p>
+            <p key={j.user.id} className={ j.host ? "host" : null}>{j.user.username}</p>
         )
     })
 
     
     return (
-        <>
+        <div className='viewing-room'>
             <h1>{room.name}</h1>
             <div className='viewing-room-container'>
-                <div id='vr-column-1' className='vr-column'>
-                    <div id='vr-room-info'>
-                        <h1 id='room-code'>{room.code}</h1>
-                    </div>
-                    <div id='vr-users-container'>
-                        { userCards }
-                    </div>
-                    { join.host ? (
-                        <>
-                            <button id='delete-room' onClick={() => handleDeleteRoom()}>delete room</button> 
-                            <button id='new-video' onClick={() => handleNewVideo()}>new video</button>
-                        </>
-                    ) : <button id='leave-room' onClick={() => handleDeleteJoin()}>leave room</button> }
-                </div>
-                <div id='vr-column-2' className='vr-column'>
+                <div id='vr-column-1' className='vr-box'>
                     { room.video ? (
                         <YouTube videoId={room.video.youtube_id} onReady={handleReady} onStateChange={join.host ? handleHostUpdate : null}></YouTube>
                     ) : join.host && !room.video ? (
@@ -227,13 +217,28 @@ function ViewingRoom() {
                         <h1>waiting for host...</h1>
                     )}
                 </div>
-                <div id='vr-column-3' className='vr-column'>
+                <div id='vr-column-2' className='vr-box'>
                     <div id='chat-container'>
                         <h1>chat</h1>
                     </div>
                 </div>
             </div>
-        </>
+            <div id='vr-room-info'>
+                <h1 id='room-code'>{room.code}</h1>
+                <div id='vr-users-container'>
+                    <h2>current users</h2>
+                    { userCards }
+                </div>
+                <div id='vr-buttons'>
+                    { join.host ? (
+                        <>
+                            <button id='delete-room' onClick={() => handleDeleteRoom()}>delete room</button> 
+                            <button id='new-video' onClick={() => handleNewVideo()}>new video</button>
+                        </>
+                        ) : <button id='leave-room' onClick={() => handleDeleteJoin()}>leave room</button> }
+                </div>
+            </div>
+        </div>
     )
 }
 

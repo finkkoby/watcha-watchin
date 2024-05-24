@@ -39,10 +39,10 @@ function NewRoom() {
                     }).then(r => {
                         if (r.ok) {
                             r.json().then(res => {
-                                setRoom(res.room)
-                                setJoin(res)
-                                user['rooms'].push(res.room)
-                                user['joins'].push(res)
+                                setRoom(res['room'])
+                                setJoin(res['join'])
+                                user['rooms'].push(res['room'])
+                                user['joins'].push(res['join'])
                                 setUser(user)
                                 navigate(`/user/room/${res.id}`)
                             })

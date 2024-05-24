@@ -164,7 +164,7 @@ class Rooms(Resource):
             db.session.add(room)
             db.session.commit()
             session['room_id'] = room.id
-            return join.to_dict(), 200
+            return {"join": join.to_dict(), "room": room.to_dict()}, 200
         else:
             return {'message': 'room name already exists'}, 400
         

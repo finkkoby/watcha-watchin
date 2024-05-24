@@ -1,17 +1,30 @@
+div.viewing-room {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    margin: auto;
+}
+
 h1 {
     display: block;
     text-align: center;
     letter-spacing: 4px;
 }
 
+h2 {
+    display: block;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
 div.viewing-room-container {
     display: flex;
     flex-direction: row;
-    width: 90%;
     margin: auto;
+    width: 100%;
 }
 
-div.vr-column {
+div.vr-box {
     display: flex;
     flex-direction: column;
     padding: 5px;
@@ -20,24 +33,15 @@ div.vr-column {
     border: solid var(--one) 10px;
     overflow: scroll;
 }
-div#vr-column-1 {
-    width: 15%;
-}
-
-div#vr-column-1  h1{
-    display: block;
-    text-align: center;
-}
-
-div#vr-column-3 {
-    width: 15%;
-}
-
 div#vr-column-2 {
-    width: 70%;
+    width: 25%;
 }
 
-div#vr-column-2 iframe {
+div#vr-column-1 {
+    width: 80%;
+}
+
+div#vr-column-1 iframe {
     width: 100%;
     height: 100%;
     aspect-ratio: 16 / 9;
@@ -49,3 +53,66 @@ h1#loading-message {
     letter-spacing: 15px;
 }
 
+div#vr-room-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 10px;
+    padding: 5px;
+    background-color: var(--two);
+    border: solid var(--one) 10px;
+}
+
+h1#room-code {
+    margin: auto;
+    font-size: 70px;
+    letter-spacing: 5px;
+    text-shadow: var(--three) 4px 4px 0px;
+    width: 25%;
+}
+
+div#vr-users-container {
+    width: 60%;
+    margin: auto;
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);   
+}
+
+div#vr-users-container p {
+    justify-self: center;
+    align-self: center;
+    padding: 15px;
+    letter-spacing: 2px;
+}
+
+div#vr-users-container h2 {
+    justify-self: center;
+    align-self: center;
+    padding: 15px;
+    text-shadow: var(--three) 2px 2px 0px;
+}
+
+div#vr-users-container p.host{
+    text-decoration: wavy;
+    padding: 10px;
+    border: solid white 2px;
+}
+
+div#vr-buttons {
+    width: 15%;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+div#vr-buttons button {
+    padding: 15px;
+    background-color: var(--four);
+    transform: box-shadow ease 0.25s;
+}
+
+div#vr-buttons button:hover {
+    box-shadow: white 2px 2px 2px;
+}
