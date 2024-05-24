@@ -12,7 +12,9 @@ function Chat({ socket }) {
     const { user, room } = useContext(AppContext);
 
     const date = new Date()
-    const time = date.getHours() + ":" + date.getMinutes()
+    const time = date.toLocaleString('hc', {
+        timeStyle: 'short'
+    })
 
     const welcomeMessage = {
         message: `Welcome to WHATCHA' WATCHIN'!!!`,
@@ -40,7 +42,7 @@ function Chat({ socket }) {
 
     const messageCards = messages.map((m, i) => {
         return (
-            <Message message={m} key={i} />
+            <Message message={m} key={i} user={user}/>
         )
     })
 
@@ -58,7 +60,7 @@ function Chat({ socket }) {
                     validationSchema={formSchema}
                     onSubmit={(values, { resetForm }) => {
                         const date = new Date()
-                        const time = date.getHours() + ":" + date.getMinutes()
+                        const time = date.toLocaleString('hc', {timeStyle: 'short'})
                         socket.emit('sendmessage', {
                             message: values.message,
                             username: user.username,

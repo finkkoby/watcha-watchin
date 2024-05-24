@@ -16,3 +16,20 @@ div#message-box {
 div#message-field {
     height: 10%;
 }
+
+div.message {
+    margin: 20px 4px;
+    
+}
+
+div.message > * {
+    margin: 7px 4px;
+}
+
+div.message small {
+    font-size: 10pt;
+}
+
+div.message.sent {
+    text-align: right;
+}
