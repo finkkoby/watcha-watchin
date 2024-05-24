@@ -170,8 +170,6 @@ function ViewingRoom() {
     }
 
     function handleUpdateFromHost(newTarget, player) {
-        console.log("I'm being called")
-        console.log(player)
         if (player) {
             player.seekTo(newTarget['currentTime'])
             if (newTarget.playerState === 1) {
@@ -208,7 +206,7 @@ function ViewingRoom() {
     
     return (
         <div className='viewing-room'>
-            <h1>{room.name}</h1>
+            <h1 id='room-name'>{room.name}</h1>
             <div className='viewing-room-container'>
                 <div id='vr-column-1' className='vr-box'>
                     { room.video ? (

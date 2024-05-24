@@ -36,7 +36,11 @@ div.dash-box#button-bar button{
 }
 
 div.page-footer {
-    margin: 20px auto 100px auto;
+    margin: 35px auto 100px auto;
+}
+
+div.page-footer a {
+    padding: 10px 40px;
 }
 
 div.recent-box, div.room-box {
