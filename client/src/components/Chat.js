@@ -74,7 +74,7 @@ function Chat({ socket }) {
                 >
                     <Form>
                         <Field name="message" />
-                        <button type='submit'>⬆️</button>
+                        <button type='submit'>send</button>
                     </Form>
                 </Formik>
             </div>
