@@ -143,6 +143,19 @@ class UserId(Resource):
                 return {'message': 'user not found'}, 400
         else:
             return {'message': 'user not found'}, 400
+        
+    def delete(self, id):
+        if id == int(session.get('user_id')):
+            user = User.query.filter(User.id == id).first()
+            if user:
+                db.session.delete(user)
+                db.session.commit()
+                session.pop('user_id', None)
+                return {'message': 'user deleted'}, 200
+            else:
+                return {'message': 'user not found'}, 400
+        else:
+            return {'message': 'user not found'}, 400
 
 class Rooms(Resource):
     def get(self):
@@ -217,43 +230,37 @@ class GuestJoinRoom(Resource):
             room = Room.query.filter(Room.code == json['roomCode']).first()
             if room:
                 try:
-                    guest = Guest(
-                        name=json['name'],
-                        room=room
+                    user = User(
+                        first_name=json['name'] + " (guest)",
+                        guest=True
                     )
+                    if user:
+                        join = Join(
+                            user=user,
+                            room=room
+                        )
+                        if join:
+                            db.session.add(user)
+                            db.session.add(join)
+                            db.session.commit()
+                            session['user_id'] = user.id
+                            session['room_id'] = room.id
+                            return {"user": user.to_dict(), "join": join.to_dict(), "room": room.to_dict()}, 200
+                        else:
+                            return {'message': 'could not create guest join -- try again'}, 400
+                    else:
+                        return {'message': 'could not create guest user -- try again'}, 400
                 except:
-                    return {'message': 'could not create guest -- try again'}, 400
+                    return {'message': 'could not create guest user -- try again'}, 400
+            else:
+                return {'message': 'invalid room code'}, 400
         except:
             return {'message': 'room does not exist'}, 400
-        if guest:
-            db.session.add(guest)
-            db.session.commit()
-        return guest.to_dict(), 200
 
 class LeaveRoom(Resource):
     def get(self):
         session.pop('room_id', None)
         return {'message': 'Left room'}, 200
-
-
-class GuestsId(Resource):
-    def get(self, id):
-        try:
-            guest = Guest.query.filter(Guest.id == id).first()
-            if guest:
-                return guest.to_dict(), 200
-        except:
-                return {'message': 'guest does not exist'}, 400
-        
-    def delete(self, id):
-        try:
-            guest = Guest.query.filter(Guest.id == id).first()
-            if guest:
-                db.session.delete(guest)
-                db.session.commit()
-                return {'message': 'guest deleted'}, 200
-        except:
-            return {'message': 'guest does not exist'}, 400
             
         
 class RoomsId(Resource):
@@ -286,7 +293,6 @@ class RoomsId(Resource):
                 return {'message': 'room deleted'}, 200
         except:
             return {'message': 'room does not exist'}, 400
-
 
 class JoinsId(Resource):
     def delete(self, id):
@@ -352,7 +358,6 @@ api.add_resource(Rooms, '/api/rooms', endpoint='rooms')
 api.add_resource(JoinRoom, '/api/rooms/join', endpoint='rooms_join')
 api.add_resource(GuestJoinRoom, '/api/rooms/guest_join', endpoint='rooms_guest_join')
 api.add_resource(LeaveRoom, '/api/rooms/leave', endpoint='rooms_leave')
-api.add_resource(GuestsId, '/api/guests/<int:id>', endpoint='guests_id')
 api.add_resource(RoomsId, '/api/rooms/<int:id>', endpoint='rooms_id')
 api.add_resource(UserId, '/api/users/<int:id>', endpoint='users_id')
 api.add_resource(JoinsId, '/api/joins/<int:id>', endpoint='joins_id')

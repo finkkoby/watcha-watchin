@@ -19,7 +19,7 @@ function Message({ message, user }) {
     )
     return (
         <>
-            { message.username === user.username ? sentMessage : receievedMessage }
+            { message.username === user.username || (user.guest && (message.username === user.first_name)) ? sentMessage : receievedMessage }
         </>
     )
 }

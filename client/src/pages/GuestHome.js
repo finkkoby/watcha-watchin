@@ -7,24 +7,6 @@ function GuestHome() {
     
     const { pathname } = useLocation()
 
-    useEffect(() => {
-        return (() => {
-            fetch(`/api/guests/${guest.id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(r => {
-                if (r.ok) {
-                    navigate('/')
-                } else {
-                    r.json().then(res => {
-                        console.log(res.message)
-                    })
-                }
-            })
-        })
-    })
 
     return (
         <div>

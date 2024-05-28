@@ -16,10 +16,10 @@ import ViewingRoom from './pages/ViewingRoom'
 import JoinRoom from './pages/JoinRoom'
 import GuestHome from './pages/GuestHome'
 import AppContext from './context/AppContext'
+import GuestViewingRoom from './pages/GuestViewingRoom'
 
 function App() {
   const [user, setUser] = useState(null)
-  const [guest, setGuest] = useState(null)
   const [room, setRoom] = useState(null)
   const [join, setJoin] = useState(null)
   const [socket, setSocket] = useState(null)
@@ -108,7 +108,7 @@ function App() {
         </div>
         <h1>whatcha' watchin'</h1>
         <div className='site-box'>
-          {user ? <button id='logout' onClick={handleLogout}>logout</button> : null}
+          { user && !user.guest ? <button id='logout' onClick={handleLogout}>logout</button> : null}
         </div>
       </div>
       <AppContext.Provider value={
@@ -119,8 +119,6 @@ function App() {
           handleUpdate: handleUpdate,
           room: room,
           setRoom: setRoom,
-          guest: guest,
-          setGuest: setGuest,
           join: join,
           setJoin: setJoin
         }
@@ -133,7 +131,7 @@ function App() {
             <Route path='join' element={<Join />} />
           </Route>
           <Route path='/guest' element={<GuestHome />} >
-            <Route path='/guest/room/:id' element={<ViewingRoom />} />
+            <Route path='/guest/room/:id' element={<GuestViewingRoom />} />
           </Route>
           <Route path='/user' element={<UserHome />} >
             <Route path='/user' element={<UserDashboard />} />

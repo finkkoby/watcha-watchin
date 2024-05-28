@@ -9,7 +9,7 @@ import ViewingRoomLoading from '../components/ViewingRoomLoading'
 import URLForm from '../components/URLForm'
 import Chat from '../components/Chat'
 
-function ViewingRoom() {
+function GuestViewingRoom() {
     const { user, setUser, room, setRoom, join, setJoin, navigate } = useContext(AppContext)
 
 
@@ -45,9 +45,6 @@ function ViewingRoom() {
 
             s.on('new_video', data => {
                 setRoom({...room, video: data})
-                if (data) {
-                    handleNewRecent(data)
-                }
             })
 
             s.on('disconnect', () => {
@@ -57,7 +54,7 @@ function ViewingRoom() {
             return (() => {
                 handleLeave(s)
                 if (!join.host) {
-                    handleDeleteJoin()
+                    handleDeleteGuest()
                 }
             })
         }
@@ -72,7 +69,7 @@ function ViewingRoom() {
     }
 
     function handleAddJoin(data) {
-        setRoomJoins([...room.joins, data])
+        setRoomJoins([...room.joins])
     }
 
     function handleRemoveJoin(join) {
@@ -95,68 +92,18 @@ function ViewingRoom() {
         })
     }
 
-    function handleDeleteJoin() {
-        fetch(`/api/joins/${join.id}`, {
+    function handleDeleteGuest() {
+        fetch(`/api/users/${user.id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
-        }})
-       .then(r => {
-            if (r.ok) {
-                r.json().then(res => {
-                    const newJoins = user.joins.filter(j => j.id !== join.id)
-                    setUser({...user, joins : newJoins})
-                    setRoom(null)
-                    setJoin(null)
-                    navigate('/user')
-                })
-            } else {
-                r.json().then(res => {
-                    console.log(res.message)
-                })
             }
-       })
-    }
-
-    function handleDeleteRoom() {
-        fetch(`/api/rooms/${room.id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-        }})
-       .then(r => {
-        if (r.ok) {
-            r.json().then(res => {
-                const newJoins = user.joins.filter(j => j.room.id !== room.id)
-                const newRooms = user.rooms.filter(r => r.id !== room.id)
-                setUser({...user, joins : newJoins, rooms : newRooms})
-                setRoom(null)
-                setJoin(null)
-                navigate('/user')
-            })
-        } else {
-            r.json().then(res => {
-                console.log(res.message)
-            })
-        }
-       })
-    }
-
-    function handleNewRecent(video) {
-        fetch('/api/recents', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                user: user.id,
-                video: video.id
-            })
-        }).then(r => {
+        })
+        .then(r => {
             if (r.ok) {
                 r.json().then(res => {
-                    user.recents.push(res)
-                    setUser({...user})
+                    setUser(false)
+                    navigate('/login')
                 })
             } else {
                 r.json().then(res => {
@@ -164,9 +111,6 @@ function ViewingRoom() {
                 })
             }
         })
-    }
-    function handleHostUpdate(event) {
-        socket.emit('hostupdate', {name: room.name, event: event.target.playerInfo})
     }
 
     function handleUpdateFromHost(newTarget, player) {
@@ -192,52 +136,39 @@ function ViewingRoom() {
         })
     }
 
-    function handleNewVideo() {
-        setRoom({...room, video: null})
-        socket.emit("video_update", { name: room.name, video: null })
-    }
-
     const userCards = roomJoins.map(j => {
         return (
             <p key={j.user.id} className={ j.host ? "host" : null}>{ j.user.username ? j.user.username : j.user.first_name}</p>
         )
     })
 
-    
     return (
         <div className='viewing-room'>
-            <h1 id='room-name'>{room.name}</h1>
-            <div className='viewing-room-container'>
-                <div id='vr-column-1' className='vr-box'>
-                    { room.video ? (
-                        <YouTube videoId={room.video.youtube_id} onReady={handleReady} onStateChange={join.host ? handleHostUpdate : null}></YouTube>
-                    ) : join.host && !room.video ? (
-                        <URLForm socket={socket}/>
-                    ) : (
-                        <h1>waiting for host...</h1>
-                    )}
-                </div>
-                <div id='vr-column-2' className='vr-box'>
-                    <Chat socket={socket}/>
-                </div>
+        <h1 id='room-name'>{room.name}</h1>
+        <div className='viewing-room-container'>
+            <div id='vr-column-1' className='vr-box'>
+                { room.video ? (
+                    <YouTube videoId={room.video.youtube_id} onReady={handleReady}></YouTube>
+                ) : (
+                    <h1>waiting for host...</h1>
+                )}
             </div>
-            <div id='vr-room-info'>
-                <h1 id='room-code'>{room.code}</h1>
-                <div id='vr-users-container'>
-                    <h2>current users</h2>
-                    { userCards }
-                </div>
-                <div id='vr-buttons'>
-                    { join.host ? (
-                        <>
-                            <button id='delete-room' onClick={() => handleDeleteRoom()}>delete room</button> 
-                            <button id='new-video' onClick={() => handleNewVideo()}>new video</button>
-                        </>
-                        ) : <button id='leave-room' onClick={() => handleDeleteJoin()}>leave room</button> }
-                </div>
+            <div id='vr-column-2' className='vr-box'>
+                <Chat socket={socket}/>
             </div>
         </div>
+        <div id='vr-room-info'>
+            <h1 id='room-code'>{room.code}</h1>
+            <div id='vr-users-container'>
+                <h2>current users</h2>
+                { userCards }
+            </div>
+            <div id='vr-buttons'>
+                <button id='leave-room' onClick={() => handleDeleteGuest()}>leave room</button>
+            </div>
+        </div>
+    </div>
     )
 }
 
-export default ViewingRoom;
+export default GuestViewingRoom;

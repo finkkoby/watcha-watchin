@@ -65,7 +65,7 @@ function Chat({ socket }) {
                         const time = date.toLocaleString('hc', {timeStyle: 'short'})
                         socket.emit('sendmessage', {
                             message: values.message,
-                            username: user.username,
+                            username: `${user.username ? user.username : user.first_name}`,
                             time: time,
                             name: room.name
                         })

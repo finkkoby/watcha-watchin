@@ -21,9 +21,10 @@ class User(db.Model, SerializerMixin):
     first_name = db.Column(db.String)
     last_name = db.Column(db.String)
     age = db.Column(db.Integer)
+    guest = db.Column(db.Boolean, default=False)
 
     # Relationships
-    joins = db.relationship("Join", back_populates="user")
+    joins = db.relationship("Join", back_populates="user", cascade='all')
     recents = db.relationship("Recent", back_populates="user")
 
     videos = association_proxy("recents", 'video',
