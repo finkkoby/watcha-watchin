@@ -17,6 +17,16 @@ function GuestViewingRoom() {
     const [socket, setSocket] = useState(false)
     const [roomJoins, setRoomJoins] = useState([])
     
+    if (error) {
+        console.log(error)
+    }
+
+    useEffect(() => {
+        return () => {
+          setError(false)
+        }
+    }, [])
+
     useEffect(() => {
         if (room) {
             // STATE IS CAPTURED WHEN USEEFFECT IS RENDERED
@@ -82,11 +92,11 @@ function GuestViewingRoom() {
         .then(r => {
             if (r.ok) {
                 r.json().then(res => {
-                    console.log('left socket room')
+                    null
                 })
             } else {
                 r.json().then(res => {
-                    console.log(res.message)
+                    setError(res.message)
                 })
             }
         })
@@ -107,7 +117,7 @@ function GuestViewingRoom() {
                 })
             } else {
                 r.json().then(res => {
-                    console.log(res.message)
+                    setError(res.message)
                 })
             }
         })
@@ -130,7 +140,6 @@ function GuestViewingRoom() {
         const player = event.target
         socket.on('statechange', data => {
             if (!join.host && data) {
-                console.log(data)
                 handleUpdateFromHost(data, player)
             }
         })

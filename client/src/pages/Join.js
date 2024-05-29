@@ -6,11 +6,19 @@ import { Formik, Form, Field, ErrorMessage } from 'formik'
 import AppContext from '../context/AppContext'
 
 function Join() {
+    const [error, setError] = useState(false)
+
     const { setRoom, navigate, setUser, setJoin } = useContext(AppContext)
 
+    useEffect(() => {
+        return () => {
+          setError(false)
+        }
+      }, [])
+
     const formSchema = yup.object().shape({
-        name: yup.string().required(),
-        roomCode: yup.string().required()
+        name: yup.string().required('please enter a name'),
+        roomCode: yup.string().required('please enter a room code'),
     })
 
 
@@ -42,7 +50,7 @@ function Join() {
                             })
                         } else {
                             r.json().then(res => {
-                                console.log(res.message)
+                                setError(res.message)
                             })
                         }
                     })
@@ -61,6 +69,8 @@ function Join() {
                             <Field name="roomCode" placeholder="required" />
                         </label>
                         <ErrorMessage name="roomCode" component="p" />
+
+                        { error && !props.errors.name && !props.errors.roomCode ? <p>{error}</p> : null}
 
                         <button type='submit'>- join room -</button>
                     </Form>

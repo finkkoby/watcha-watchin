@@ -53,6 +53,19 @@ def check_login():
         if not session.get('user_id') \
             and request.endpoint not in ['login', 'signup', 'rooms_guest_join', 'guests_id']:
             return {'message': 'user not logged in'}, 401
+
+@app.before_request
+def room_users():
+    if request.path.startswith('/api'):
+        if request.endpoint in ['rooms_guest_join', 'rooms_join']:
+            json = request.get_json()
+            try:
+                room = Room.query.filter(Room.code == json['roomCode']).first()
+            except:
+                room = Room.query.filter(Room.id == json['roomId']).first()
+            users = room.joins
+            if len(users) == 7:
+                return {'message': 'room is full'}, 400
     
 class CheckSession(Resource):
     def get(self):

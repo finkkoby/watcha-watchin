@@ -7,6 +7,14 @@ import AppContext from "../context/AppContext";
 function UserDashboard() {
     const { user, join, navigate, setRoom, setJoin } = useContext(AppContext);
 
+    const [error, setError] = useState(false)
+
+    useEffect(() => {
+        return () => {
+          setError(false)
+        }
+      }, [])
+
     if (!user) {
         return <h1>loading...</h1>
     }
@@ -35,7 +43,6 @@ function UserDashboard() {
     myRecents.reverse()
 
     function handleEnterRoom(room) {
-        console.log(room)
         setJoin(user.joins.find(join => join.room.id === room.id))
         fetch('/api/rooms/join', {
             method: 'PATCH',
@@ -53,7 +60,7 @@ function UserDashboard() {
                 })
             } else {
                 r.json().then(res => {
-                    console.log(res.message)
+                    setError(res.message)
                 })
             }
         })

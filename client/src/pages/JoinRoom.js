@@ -11,8 +11,10 @@ function JoinRoom() {
     const { user, setUser, room, setRoom, navigate, setJoin } = useContext(AppContext)
 
     useEffect(() => {
-        return () => setError(false)
-    }, [])
+        return () => {
+          setError(false)
+        }
+      }, [])
 
     const formSchema = yup.object().shape({
         roomCode: yup.string().required("please enter a room code")

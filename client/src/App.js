@@ -23,7 +23,18 @@ function App() {
   const [room, setRoom] = useState(null)
   const [join, setJoin] = useState(null)
   const [socket, setSocket] = useState(null)
+  const [error, setError] = useState(false)
   const navigate = useNavigate()
+
+  if (error) {
+    console.log(error)
+  }
+
+  useEffect(() => {
+    return () => {
+      setError(false)
+    }
+  }, [])
 
   useEffect(() => {
     const socketInstance = io()
@@ -85,7 +96,7 @@ function App() {
           })
         } else {
           r.json().then(res => {
-            console.log(res.message)
+            setError(res.message)
           })
         }
       })

@@ -17,6 +17,16 @@ function ViewingRoom() {
     const [socket, setSocket] = useState(false)
     const [roomJoins, setRoomJoins] = useState([])
     
+    if (error) {
+        console.log(error)
+    }
+
+    useEffect(() => {
+        return () => {
+          setError(false)
+        }
+      }, [])
+
     useEffect(() => {
         if (room) {
             // STATE IS CAPTURED WHEN USEEFFECT IS RENDERED
@@ -83,13 +93,9 @@ function ViewingRoom() {
         socket.emit('leave', {room: room.name, join: join})
         fetch('/api/rooms/leave')
         .then(r => {
-            if (r.ok) {
+            if (!(r.ok)) {
                 r.json().then(res => {
-                    console.log('left socket room')
-                })
-            } else {
-                r.json().then(res => {
-                    console.log(res.message)
+                    setError(res.message)
                 })
             }
         })
@@ -112,7 +118,7 @@ function ViewingRoom() {
                 })
             } else {
                 r.json().then(res => {
-                    console.log(res.message)
+                    setError(res.message)
                 })
             }
        })
@@ -136,7 +142,7 @@ function ViewingRoom() {
             })
         } else {
             r.json().then(res => {
-                console.log(res.message)
+                setError(res.message)
             })
         }
        })
@@ -160,7 +166,7 @@ function ViewingRoom() {
                 })
             } else {
                 r.json().then(res => {
-                    console.log(res.message)
+                    setError(res.message)
                 })
             }
         })
@@ -186,7 +192,6 @@ function ViewingRoom() {
         const player = event.target
         socket.on('statechange', data => {
             if (!join.host && data) {
-                console.log(data)
                 handleUpdateFromHost(data, player)
             }
         })

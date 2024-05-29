@@ -61,7 +61,7 @@ function NewRoom() {
                             <Field name="name" placeholder="required" />
                         </label>
                         <ErrorMessage name="name" component="p" />
-                        { error ? <p>{error}</p> : null}
+                        { error && !props.errors.name ? <p>{error}</p> : null}
                         <button type='submit'>- create room -</button>
                     </Form>
                 )}

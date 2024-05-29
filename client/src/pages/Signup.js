@@ -8,6 +8,12 @@ import AppContext from '../context/AppContext'
 function Signup() {
     const [error, setError] = useState(false)
     const { setUser, navigate } = useContext(AppContext)
+
+    useEffect(() => {
+        return () => {
+          setError(false)
+        }
+      }, [])
     
     const formSchema = yup.object().shape({
         firstName: yup.string().required("please enter your first name"),
@@ -101,11 +107,19 @@ function Signup() {
 
                         <label htmlFor='age'>
                             enter your age
-                            <Field name="age" placeholder="optional" />
+                            <Field name="age" placeholder="required" />
                         </label>
                         <ErrorMessage name="age" component="p" />
 
-                        {error ? <p>{error}</p> : null}
+                        {error && (
+                            !props.errors.username &&
+                            !props.errors.email &&
+                            !props.errors.firstName &&
+                            !props.errors.lastName &&
+                            !props.errors.password && 
+                            !props.errors.confirmPassword &&
+                            !props.errors.age
+                            ) ? <p>{error}</p> : null}
 
                         <button type='submit'>- signup -</button>
                     </Form>

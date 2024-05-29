@@ -16,8 +16,10 @@ function Login() {
     }, [user])
 
     useEffect(() => {
-        return () => setError(false)
-    }, [])
+        return () => {
+          setError(false)
+        }
+      }, [])
 
     const formSchema = yup.object().shape({
         username: yup.string()
@@ -72,7 +74,7 @@ function Login() {
                         </label>
                         <ErrorMessage name="password" component="p" />
 
-                        {error ? <p>{error}</p> : null}
+                        {error && !props.errors.username && !props.errors.password ? <p>{error}</p> : null}
 
                         <button type='submit'>- login -</button>
                     </Form>
