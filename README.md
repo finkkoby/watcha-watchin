@@ -1,6 +1,6 @@
 # WHATCHA' WHATCHIN'
 
-##
+## About
 When I started reading up on WebSocket, the first thing I thought of
 was a web application I used to use with my friends called Netflix Party.
 This allowed you to watch Netflix content synchronously with your friends,
@@ -53,4 +53,11 @@ with the host's player. There is also a chat box available that uses the socket
 connection to send and recieve messages without individual HTTP fetch requests.
 
 ### Recent Videos
-If you are in a viewing room, and 
+Every video that you watch or view in a viewing room, will be persisted to the
+server as a RECENT instance. This allows you to copy the YouTube URL of a recent
+video to use or reuse in a new viewing room.
+
+### Guest Viewing
+You can also create a temporary guest user to watch along with friends, without
+having to create an account. The guest data is deleted once they leave a room.
+Recents are not tracked with guest viewing.

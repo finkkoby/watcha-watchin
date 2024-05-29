@@ -26,3 +26,7 @@ div.site-box p {
   top: 4px;
   letter-spacing: 2px;
 }
+
+div.about-body {
+  width: 45%;
+}
