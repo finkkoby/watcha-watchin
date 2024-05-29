@@ -41,17 +41,6 @@ function App() {
 
     setSocket(socketInstance)
 
-    socketInstance.on('connect', () => {
-        console.log('connected')
-    })
-
-    socketInstance.on('joined', (data) => {
-      console.log(data)
-    })
-  
-    socketInstance.on('disconnect', () => {
-        console.log('disconnected')
-    })
   }, [])
 
   useEffect(() => {

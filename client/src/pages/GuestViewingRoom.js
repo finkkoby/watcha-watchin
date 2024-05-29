@@ -35,7 +35,6 @@ function GuestViewingRoom() {
             setSocket(s)
 
             s.on('connect', () => {
-                console.log('connected to join namespace')
                 s.emit('join', {room: room.name, join: join})
             })
 
@@ -55,10 +54,6 @@ function GuestViewingRoom() {
 
             s.on('new_video', data => {
                 setRoom({...room, video: data})
-            })
-
-            s.on('disconnect', () => {
-                console.log('disconnected from join namespace')
             })
 
             return (() => {

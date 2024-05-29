@@ -19,7 +19,6 @@ function UserDashboard() {
         return <h1>loading...</h1>
     }
 
-    console.log(user)
     const myRooms = user.joins.map(j => {
         return (
             <div key={j.room.id} className='room-box'>

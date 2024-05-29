@@ -39,7 +39,6 @@ function JoinRoom() {
                     }).then(r => {
                         if (r.ok) {
                             r.json().then(res => {
-                                console.log(res)
                                 setRoom(res['room'])
                                 setJoin(res['join'])
                                 user['joins'].push(res['join'])

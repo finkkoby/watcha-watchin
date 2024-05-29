@@ -35,7 +35,6 @@ function ViewingRoom() {
             setSocket(s)
 
             s.on('connect', () => {
-                console.log('connected to join namespace')
                 s.emit('join', {room: room.name, join: join})
             })
 
@@ -61,10 +60,6 @@ function ViewingRoom() {
                 if (data) {
                     handleNewRecent(data)
                 }
-            })
-
-            s.on('disconnect', () => {
-                console.log('disconnected from join namespace')
             })
 
             return (() => {
