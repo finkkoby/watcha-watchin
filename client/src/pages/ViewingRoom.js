@@ -45,6 +45,9 @@ function ViewingRoom() {
                 } else {
                     handleAddJoin(data)
                 }
+                if (room.video) {
+                    handleNewRecent(room.video)
+                }
             })
 
             s.on('left', data => {
