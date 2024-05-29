@@ -90,11 +90,7 @@ function GuestViewingRoom() {
         socket.emit('leave', {room: room.name, join: join})
         fetch('/api/rooms/leave')
         .then(r => {
-            if (r.ok) {
-                r.json().then(res => {
-                    null
-                })
-            } else {
+            if (!(r.ok)) {
                 r.json().then(res => {
                     setError(res.message)
                 })
